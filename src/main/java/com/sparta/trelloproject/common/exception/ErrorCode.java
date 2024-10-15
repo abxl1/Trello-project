@@ -18,13 +18,17 @@ public enum ErrorCode {
 
 
     // Token ErrorCode
+    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "조회 실패 : %s"),
 
 
 
 
     // User ErrorCode
 
-
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "조회 실패 : %s"),
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "유효성 검사 실패 : %s"),
+    SIGNUP_ERROR(HttpStatus.BAD_REQUEST, "회원가입 실패 : %s"),
+    SIGNIN_ERROR(HttpStatus.BAD_REQUEST, "로그인 실패 : %s"),
 
     // Member ErrorCode
 
@@ -81,5 +85,9 @@ public enum ErrorCode {
     ErrorCode(HttpStatus httpStatus, String message){
         this.status = httpStatus;
         this.message = message;
+    }
+
+    public String customMessage(String detail) {
+        return String.format(message, detail); // 동적으로 메시지 포맷팅
     }
 }
