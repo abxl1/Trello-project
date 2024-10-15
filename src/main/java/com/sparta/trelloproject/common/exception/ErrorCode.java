@@ -51,7 +51,7 @@ public enum ErrorCode {
 
 
     // Card Errorcode
-
+    CARD_NOT_FORBIDDEN(HttpStatus.FORBIDDEN, "카드 생성/수정 권한이 없습니다."),
 
 
 
