@@ -4,12 +4,14 @@ import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.common.entity.Timestamped;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User extends Timestamped {
 
