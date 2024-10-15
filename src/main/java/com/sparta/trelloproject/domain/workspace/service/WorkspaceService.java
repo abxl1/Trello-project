@@ -1,11 +1,10 @@
 package com.sparta.trelloproject.domain.workspace.service;
 
 import com.sparta.trelloproject.common.exception.CustomException;
-import com.sparta.trelloproject.common.exception.ErrorCode;
 import com.sparta.trelloproject.domain.user.entity.User;
-import com.sparta.trelloproject.domain.user.request.UserRequest;
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
+import com.sparta.trelloproject.domain.user.request.UserRequest;
 import com.sparta.trelloproject.domain.workspace.response.WorkspaceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

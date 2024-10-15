@@ -1,6 +1,7 @@
 package com.sparta.trelloproject.domain.board.entity;
 
 
+import com.sparta.trelloproject.domain.list.entity.TaskList;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +38,7 @@ public class Board {
     private LocalDateTime modifiedAt;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<List> lists = new ArrayList<>();
+    private List<TaskList> lists = new ArrayList<>();
 
     public Board(Long workspaceId, Long userId, String title, String background) {
         this.workspaceId = workspaceId;
