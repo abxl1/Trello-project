@@ -1,18 +1,16 @@
 package com.sparta.trelloproject.domain.list.controller;
 
-import com.sparta.trelloproject.domain.list.dto.ListSaveRequest;
-import com.sparta.trelloproject.domain.list.dto.ListSaveResponse;
-import com.sparta.trelloproject.domain.list.service.ListService;
+import com.sparta.trelloproject.domain.list.service.TaskListService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/boards/{boardId}")
-public class ListController {
+public class TaskListController {
 
-    private final ListService listService;
+    private final TaskListService taskListService;
 
 //    @PostMapping("/lists")
 //    public ResponseEntity<ListSaveResponse> saveList(@RequestBody ListSaveRequest listSaveRequest, @PathVariable("boardId") String boardId) {

@@ -12,7 +12,7 @@ public class CustomException extends RuntimeException {
     }
 
     public CustomException(ErrorCode errorCode, String detail) {
-        super(errorCode.customMessage(detail)); // 메시지 포맷팅
+        super(String.format(errorCode.getMessage(), detail)); // 메시지 포맷팅
         this.errorCode = errorCode;
     }
 }
