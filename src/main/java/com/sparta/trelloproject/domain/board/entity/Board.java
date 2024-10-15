@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -33,6 +35,9 @@ public class Board {
 
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<List> lists = new ArrayList<>();
 
     public Board(Long workspaceId, Long userId, String title, String background) {
         this.workspaceId = workspaceId;
