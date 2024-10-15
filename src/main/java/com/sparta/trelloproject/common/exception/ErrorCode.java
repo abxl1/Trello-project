@@ -56,8 +56,7 @@ public enum ErrorCode {
 
 
     // Comment Errorcode
-
-
+    Comment_FORBIDDEN(HttpStatus.FORBIDDEN, "ㅁㄴㅇㄹㄴㅁㅇㄹ"),
 
 
     // File Errorcode
