@@ -4,8 +4,12 @@ import com.sparta.trelloproject.domain.board.entity.Board;
 import com.sparta.trelloproject.domain.board.repository.BoardRepository;
 import com.sparta.trelloproject.domain.board.request.BoardRequest;
 import com.sparta.trelloproject.domain.board.response.BoardResponse;
+import com.sparta.trelloproject.domain.user.entity.User;
+import com.sparta.trelloproject.domain.user.enums.UserRole;
+import com.sparta.trelloproject.domain.user.repository.UserRepository;
+import com.sparta.trelloproject.domain.workspace.entity.Workspace;
+import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,16 +36,18 @@ public class BoardService {
         }
 
         // 워크스페이스 확인
-        Workspace workspace = workspaceRepository.findById(request.getWorkspaceId)
+        Workspace workspace = workspaceRepository.findById(request.getWorkspaceId())
                 .orElseThrow(() -> new IllegalArgumentException("워크스페이스가 존재하지 않습니다."));
 
         // 읽기 전용 멤버 예외처리
-        if(user.getRole() == UserRole.READ_ONLY) {
+        if(user.getUserRole() == UserRole.ROLE_USER) {
             throw new IllegalArgumentException("읽기 전용 권한입니다.");
         }
 
         Board board = new Board(request.getWorkspaceId(), userId, request.getTitle(), request.getBackground());
         boardRepository.save(board);
+
+        return new BoardResponse(board);
     }
 
     // 보드 수정
@@ -55,7 +61,7 @@ public class BoardService {
 
         // 읽기 전용 멤버 예외처리
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        if (user.getRole() == UserRole.READ_ONLY) {
+        if (user.getUserRole() == UserRole.ROLE_USER) {
             throw new IllegalArgumentException("읽기 전용 권한입니다.");
         }
 
@@ -76,7 +82,7 @@ public class BoardService {
 
         // 읽기 전용 멤버 예외처리
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-        if (user.getRole() == UserRole.READ_ONLY) {
+        if (user.getUserRole() == UserRole.ROLE_USER) {
             throw new IllegalStateException("읽기 전용 권한입니다.");
         }
 

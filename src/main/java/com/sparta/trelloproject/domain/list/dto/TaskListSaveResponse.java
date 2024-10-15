@@ -1,4 +1,4 @@
 package com.sparta.trelloproject.domain.list.dto;
 
-public class ListSaveResponse {
+public class TaskListSaveResponse {
 }
