@@ -89,6 +89,7 @@ class CardServiceTest {
 
     @Test
     public void 카드수정성공() {
+
         // Given
         Long listId = 1L;
         AuthUser authUser = new AuthUser(1L, "emain", UserRole.ROLE_ADMIN);
