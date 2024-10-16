@@ -3,9 +3,13 @@ package com.sparta.trelloproject.domain.list.entity;
 import com.sparta.trelloproject.domain.board.entity.Board;
 import com.sparta.trelloproject.domain.list.dto.TaskListSaveRequest;
 import com.sparta.trelloproject.domain.user.entity.User;
+import com.sparta.trelloproject.domain.card.entity.Card;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -29,10 +33,14 @@ public class TaskList {
     @JoinColumn(name = "user_id")
     private User user;
 
-//    @OneToMany(mappedBy = "list")
-//    private List<Card> cards = new ArrayList<>();
-
     public TaskList(TaskListSaveRequest request) {
         this.title = request.getTitle();
+    }
+
+    @OneToMany(mappedBy = "taskList", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Card> cards = new ArrayList<>();
+
+    public TaskList(String title) {
+        this.title = title;
     }
 }

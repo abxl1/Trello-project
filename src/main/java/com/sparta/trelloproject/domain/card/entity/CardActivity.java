@@ -17,18 +17,19 @@ public class CardActivity {
     @Column(name = "card_activity_id", nullable = false)
     private Long id;
 
-    private String member;
-
     private String activity;
 
     private LocalDateTime timestamp;
 
-    @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_id")
     private Card card;
 
-
+    public CardActivity(String activity, Card card){
+        this.activity = activity;
+        this.timestamp = LocalDateTime.now();
+        this.card = card;
+    }
 
 
 }
