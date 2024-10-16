@@ -24,26 +24,38 @@ public enum ErrorCode {
 
 
     // User ErrorCode
-
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "조회 실패 : %s"),
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "유효성 검사 실패 : %s"),
     SIGNUP_ERROR(HttpStatus.BAD_REQUEST, "회원가입 실패 : %s"),
     SIGNIN_ERROR(HttpStatus.BAD_REQUEST, "로그인 실패 : %s"),
 
+    // Role ErrorCode
+    PERMISSION_ERROR(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+
+
+
     // Member ErrorCode
+    ROLE_ERROR(HttpStatus.FORBIDDEN, "권한 없음 : %s"),
+    ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "조회 실패 : %s"),
+    SELF_REQUEST_FORBIDDEN(HttpStatus.FORBIDDEN, "본인 요청 불가 : %s"),
+    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "중복 요청 불가 : %s"),
 
 
+    // Workspace ErrorCode
+    WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "워크스페이스를 찾을 수 없습니다."),
 
-
-    // Worksapce ErrorCode
-    WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 워크스페이스를 찾을 수 없습니다."),
 
 
 
     // Board Errorcode
-
-
-
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 보드를 찾을 수 없습니다"),
+    BOARD_FORBIDDEN(HttpStatus.FORBIDDEN, "보드를 수정/삭제할 권한이 없습니다."),
+    BOARD_BAD_REQUEST(HttpStatus.BAD_REQUEST, "보드 요청에 잘못된 정보가 포함되어 있습니다."),
+    BOARD_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "보드 생성에 실패했습니다."),
+    BOARD_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "보드 수정에 실패했습니다."),
+    BOARD_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "보드 삭제에 실패했습니다."),
+    BOARD_TITLE_EMPTY(HttpStatus.BAD_REQUEST, "보드 제목은 필수입니다."),
+    BOARD_READ_ONLY_MEMBER(HttpStatus.FORBIDDEN, "읽기 전용 권한입니다"),
 
     // List Errorcode
 
