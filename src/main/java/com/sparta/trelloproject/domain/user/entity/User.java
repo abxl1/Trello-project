@@ -1,12 +1,15 @@
 package com.sparta.trelloproject.domain.user.entity;
 
-import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.common.entity.Timestamped;
+import com.sparta.trelloproject.domain.auth.entity.AuthUser;
+import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @Entity
@@ -15,16 +18,21 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 public class User extends Timestamped {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Member> members;
 
     public User(String email, String password, UserRole userRole) {
         this.email = email;

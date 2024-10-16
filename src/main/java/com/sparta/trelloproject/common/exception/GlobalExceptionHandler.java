@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
      * @param message 오류 메시지
      * @return 해당 내용이 담긴 에러 객체
      */
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> getErrorResponse(HttpStatus status, String message) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("status", status.name());
