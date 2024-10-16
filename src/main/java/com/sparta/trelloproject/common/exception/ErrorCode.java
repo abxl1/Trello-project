@@ -30,13 +30,18 @@ public enum ErrorCode {
     SIGNUP_ERROR(HttpStatus.BAD_REQUEST, "회원가입 실패 : %s"),
     SIGNIN_ERROR(HttpStatus.BAD_REQUEST, "로그인 실패 : %s"),
 
+    // Role ErrorCode
+    PERMISSION_ERROR(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+
+
+
     // Member ErrorCode
 
 
 
 
-    // Worksapce ErrorCode
-    WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 워크스페이스를 찾을 수 없습니다."),
+    // Workspace ErrorCode
+    WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "워크스페이스를 찾을 수 없습니다."),
 
 
 
