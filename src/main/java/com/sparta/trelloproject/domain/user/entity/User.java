@@ -37,7 +37,7 @@ public class User extends Timestamped {
 
 
 
-    public void addWorkspaceUser(WorkspaceUser workspaceUser) {
+/*    public void addWorkspaceUser(WorkspaceUser workspaceUser) {
         this.workspaceUser.add(workspaceUser);
         workspaceUser.addUser(this);
     }
@@ -45,7 +45,7 @@ public class User extends Timestamped {
     public void removeWorkspaceUser(WorkspaceUser workspaceUser) {
         this.workspaceUser.remove(workspaceUser);
         workspaceUser.deleteUser();
-    }
+    }*/
 
     public User(String email, String password, UserRole userRole) {
         this.email = email;
