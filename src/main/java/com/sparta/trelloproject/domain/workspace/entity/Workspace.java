@@ -1,6 +1,7 @@
 package com.sparta.trelloproject.domain.workspace.entity;
 
 import com.sparta.trelloproject.common.entity.Timestamped;
+import com.sparta.trelloproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,10 @@ public class Workspace extends Timestamped {
   private Set<WorkspaceUser> Member = new HashSet<>();
 
   private String title;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
 
 /*  public void addWorkspaceUser(WorkspaceUser member) {
