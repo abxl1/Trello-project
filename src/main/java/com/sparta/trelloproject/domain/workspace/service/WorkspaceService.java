@@ -16,6 +16,7 @@ import com.sparta.trelloproject.domain.user.request.UserCreateRequest;
 import com.sparta.trelloproject.domain.workspace.response.WorkspaceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,7 @@ public class WorkspaceService {
 
 
   // 워크스페이스 생성 로직
+  @Transactional
   public WorkspaceResponse createWorkspace(AuthUser authUser, UserCreateRequest userCreateRequest) {
     // 유저 조회
     User user = findUserById(authUser);
@@ -78,6 +80,7 @@ public class WorkspaceService {
   }
 
   // 워크스페이스 수정 로직
+  @Transactional
   public WorkspaceResponse updateWorkspace(AuthUser authUser, UserUpdateRequest userUpdateRequest) {
     User user = findUserById(authUser);
 
@@ -108,6 +111,7 @@ public class WorkspaceService {
   }
 
   // 워크스페이스 삭제 로직
+  @Transactional
   public void deleteWorkspace(AuthUser authUser, Long workspaceId) {
     // 멤버 조회
     Member member = findMemberByUserIdAndWorkspaceId(authUser, workspaceId).orElseThrow(
