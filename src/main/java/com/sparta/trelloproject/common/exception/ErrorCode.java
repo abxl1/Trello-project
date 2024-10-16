@@ -24,7 +24,6 @@ public enum ErrorCode {
 
 
     // User ErrorCode
-
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "조회 실패 : %s"),
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "유효성 검사 실패 : %s"),
     SIGNUP_ERROR(HttpStatus.BAD_REQUEST, "회원가입 실패 : %s"),
@@ -36,12 +35,15 @@ public enum ErrorCode {
 
 
     // Member ErrorCode
-
-
+    ROLE_ERROR(HttpStatus.FORBIDDEN, "권한 없음 : %s"),
+    ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "조회 실패 : %s"),
+    SELF_REQUEST_FORBIDDEN(HttpStatus.FORBIDDEN, "본인 요청 불가 : %s"),
+    USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "중복 요청 불가 : %s"),
 
 
     // Workspace ErrorCode
     WORKSPACE_NOT_FOUND(HttpStatus.NOT_FOUND, "워크스페이스를 찾을 수 없습니다."),
+
 
 
 
