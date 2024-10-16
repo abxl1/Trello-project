@@ -3,6 +3,7 @@ package com.sparta.trelloproject.domain.workspace.controller;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.user.request.UserCreateRequest;
 import com.sparta.trelloproject.domain.user.request.UserGetRequest;
+import com.sparta.trelloproject.domain.user.request.UserUpdateRequest;
 import com.sparta.trelloproject.domain.workspace.response.WorkspaceResponse;
 import com.sparta.trelloproject.domain.workspace.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,14 @@ public class WorkspaceController {
   }
 
   // 워크스페이스 수정
+  @PatchMapping
+  public ResponseEntity<WorkspaceResponse> updateWorkspace(@AuthenticationPrincipal AuthUser authUser,
+                                                           @RequestBody UserUpdateRequest userUpdateRequest) {
+
+    WorkspaceResponse response = workspaceService.updateWorkspace(authUser, userUpdateRequest);
+
+    return ResponseEntity.ok(response);
+  }
 
   // 워크스페이스 삭제
   @DeleteMapping("/{workspaceId}")

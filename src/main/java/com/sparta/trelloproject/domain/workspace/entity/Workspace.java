@@ -3,6 +3,7 @@ package com.sparta.trelloproject.domain.workspace.entity;
 import com.sparta.trelloproject.common.entity.Timestamped;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.user.entity.User;
+import com.sparta.trelloproject.domain.user.request.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,14 +40,10 @@ public class Workspace extends Timestamped {
     this.user = user;
   }
 
-
-/*  public void addWorkspaceUser(WorkspaceUser member) {
-    this.Member.add(member);
-    member.addWorkspace(this);
+  public void update(UserUpdateRequest userUpdateRequest) {
+    this.title = userUpdateRequest.getTitle();
+    this.explaination = userUpdateRequest.getExplaination();
   }
 
-  public void removeWorkspaceUser(WorkspaceUser workspaceUser) {
-    this.Member.remove(workspaceUser);
-    workspaceUser.deleteWorkspace();
-  }*/
+
 }
