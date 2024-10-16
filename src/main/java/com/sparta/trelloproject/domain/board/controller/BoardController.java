@@ -8,13 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/boards")
+@RequestMapping("/api/workspaces/{workspaceId}/boards")
 @RequiredArgsConstructor
 public class BoardController {
 
@@ -24,11 +21,44 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<BoardResponse> createBoard(
             @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long workspaceId,
             @RequestBody BoardRequest request) {
+
         BoardResponse response = boardService.createBoard(request, authUser.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 보드 수정
+    @PatchMapping("/{boardId}")
+    public ResponseEntity<BoardResponse> updateBoard(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardId,
+            @RequestBody BoardRequest request) {
 
+        BoardResponse response = boardService.updateBoard(boardId, request, authUser.getUserId());
+        return ResponseEntity.ok(response);
+    }
+
+    // 보드 조회
+    @GetMapping("/{boardId}")
+    public ResponseEntity<BoardResponse> getBoardById(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardId) {
+
+        BoardResponse response = boardService.getBoard(boardId, authUser.getUserId());
+        return ResponseEntity.ok(response);
+    }
+
+    // 보드 삭제
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Void> deleteBoard(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long workspaceId,
+            @PathVariable Long boardId) {
+
+        boardService.deleteBoard(boardId, authUser.getUserId());
+        return ResponseEntity.noContent().build();
+    }
 }
