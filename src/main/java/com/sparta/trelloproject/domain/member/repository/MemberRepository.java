@@ -4,8 +4,12 @@ import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.enums.Assign;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
-    boolean existsByUserId(Long userId);
+import java.util.Optional;
 
-    boolean existsByAssign(Assign assign);
+public interface MemberRepository extends JpaRepository<Member, Long> {
+  boolean existsByUserId(Long userId);
+
+  boolean existsByAssign(Assign assign);
+
+  Optional<Member> findByUserId(Long userId);
 }
