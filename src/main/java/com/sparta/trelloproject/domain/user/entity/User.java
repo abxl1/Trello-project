@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -31,8 +32,8 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Member> members;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Member> members = new ArrayList<>();
 
     public User(String email, String password, UserRole userRole) {
         this.email = email;
