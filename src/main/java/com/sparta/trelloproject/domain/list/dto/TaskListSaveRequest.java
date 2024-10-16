@@ -4,4 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class TaskListSaveRequest {
+
+    private String title;
 }

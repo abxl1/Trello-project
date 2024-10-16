@@ -1,16 +1,15 @@
 package com.sparta.trelloproject.domain.user.entity;
 
-import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.common.entity.Timestamped;
+import com.sparta.trelloproject.domain.auth.entity.AuthUser;
+import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
-import com.sparta.trelloproject.domain.workspace.entity.WorkspaceUser;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Entity
@@ -24,28 +23,17 @@ public class User extends Timestamped {
 
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<WorkspaceUser> workspaceUser = new HashSet<>();
-
-
-
-/*    public void addWorkspaceUser(WorkspaceUser workspaceUser) {
-        this.workspaceUser.add(workspaceUser);
-        workspaceUser.addUser(this);
-    }
-
-    public void removeWorkspaceUser(WorkspaceUser workspaceUser) {
-        this.workspaceUser.remove(workspaceUser);
-        workspaceUser.deleteUser();
-    }*/
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Member> members;
 
     public User(String email, String password, UserRole userRole) {
         this.email = email;
