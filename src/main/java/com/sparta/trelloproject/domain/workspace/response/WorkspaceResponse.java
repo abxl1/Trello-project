@@ -8,9 +8,11 @@ public class WorkspaceResponse {
 
   private Long id;
   private String title;
+  private String explaination;
 
   public WorkspaceResponse(Workspace workspace) {
     this.id = workspace.getId();
     this.title = workspace.getTitle();
+    this.explaination = workspace.getExplaination();
   }
 }

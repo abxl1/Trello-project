@@ -38,4 +38,8 @@ public class Member {
         this.assign = member.assign;
         this.workspace = workspace;
     }
+
+    public void startAssign() {
+        this.assign = Assign.MANAGER;
+    }
 }
