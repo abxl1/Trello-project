@@ -3,10 +3,14 @@ package com.sparta.trelloproject.domain.user.entity;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.common.entity.Timestamped;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
+import com.sparta.trelloproject.domain.workspace.entity.WorkspaceUser;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -15,7 +19,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 public class User extends Timestamped {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     @Column(unique = true)
@@ -25,6 +31,21 @@ public class User extends Timestamped {
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<WorkspaceUser> workspaceUser = new HashSet<>();
+
+
+
+/*    public void addWorkspaceUser(WorkspaceUser workspaceUser) {
+        this.workspaceUser.add(workspaceUser);
+        workspaceUser.addUser(this);
+    }
+
+    public void removeWorkspaceUser(WorkspaceUser workspaceUser) {
+        this.workspaceUser.remove(workspaceUser);
+        workspaceUser.deleteUser();
+    }*/
 
     public User(String email, String password, UserRole userRole) {
         this.email = email;
