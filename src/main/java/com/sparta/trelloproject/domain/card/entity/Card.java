@@ -2,12 +2,16 @@ package com.sparta.trelloproject.domain.card.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.trelloproject.domain.card.dto.request.CardSaveRequest;
+import com.sparta.trelloproject.domain.card.dto.request.CardUpdateRequest;
+import com.sparta.trelloproject.domain.comment.entity.Comment;
+import com.sparta.trelloproject.domain.list.entity.TaskList;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Entity
@@ -27,30 +31,78 @@ public class Card {
     @Column(name = "card_description", nullable = true)
     private String description;
 
-    @Column(name = "card_index", nullable = false, unique = true)
+    @Column(name = "card_index", nullable = false)
     private Long index;
 
     @Column(name = "card_deadline", nullable = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime deadline;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "list_id")
-//    private List list;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "taskList_id")
+    private TaskList taskList;
 
-    @OneToMany(mappedBy = "card")
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardAssignee> cardAssignees = new ArrayList<>();
 
-    @OneToMany(mappedBy = "card")
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardActivity> cardActivities = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "card")
-//    private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "card")
+    private List<Comment> comments = new ArrayList<>();
 
-    public Card(CardSaveRequest request) {
+    public Card(CardSaveRequest request, Long cardIndex) {
         this.title = request.getTitle();
         this.description = request.getDescription();
         this.deadline = request.getDeadline();
+        this.index = cardIndex;
     }
 
+    public void updateCard(CardUpdateRequest request) {
+        if (request.getTitle() != null){
+            this.title = request.getTitle();
+        }
+
+        if(request.getDescription() != null){
+            this.description = request.getDescription();
+        }
+
+        if(request.getDeadline() != null){
+            this.deadline = request.getDeadline();
+        }
+    }
+
+    public void changeCardIndex(TaskList taskList, Card card, Long listId, Long index, Long totalCardIndex) {
+
+        List<Card> cards = taskList.getCards();
+
+        List<Card> sortedCards = cards.stream()
+                .sorted(Comparator.comparing(Card::getIndex))
+                .toList();
+
+        if (index > card.getIndex()) {
+            for (int i = 0; i < index; i++) {
+                sortedCards.get(i).dcreaseIndex();
+            }
+
+        } else {
+            for (int i = (int) (index + 1); i < cards.size(); i++) {
+                sortedCards.get(i).increaseIndex();
+            }
+        }
+
+        card.changeIndex(index);
+    }
+
+    public void dcreaseIndex() {
+        this.index -= 1L;
+    }
+
+    public void increaseIndex(){
+        this.index += 1L;
+    }
+
+    public void changeIndex(Long index){
+        this.index = index;
+    }
 }
