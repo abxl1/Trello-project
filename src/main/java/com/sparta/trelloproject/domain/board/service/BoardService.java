@@ -13,6 +13,7 @@ import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,20 +56,22 @@ public class BoardService {
     }
 
     // 보드 생성
-    public BoardResponse createBoard(BoardRequest request, Long userId) {
+    @Transactional
+    public BoardResponse createBoard(BoardRequest request, Long workspaceId, Long userId) {
         User user = getUser(userId);
 
         validateBoardTitle(request.getTitle());
-        Workspace workspace = getWorkspace(request.getWorkspaceId());
+        Workspace workspace = getWorkspace(workspaceId);
         validateUserRole(user);
 
-        Board board = new Board(request.getWorkspaceId(), userId, request.getTitle(), request.getBackground());
+        Board board = new Board(workspaceId, userId, request.getTitle(), request.getBackground());
         boardRepository.save(board);
 
         return new BoardResponse(board, "create");
     }
 
     // 보드 수정
+    @Transactional
     public BoardResponse updateBoard(Long boardId, BoardRequest request, Long userId) {
         Board board = getBoardById(boardId);
 
@@ -87,6 +90,7 @@ public class BoardService {
     }
 
     // 보드 조회
+    @Transactional(readOnly = true)
     public BoardResponse getBoard(Long boardId, Long userId) {
         Board board = getBoardById(boardId);
 
@@ -97,6 +101,7 @@ public class BoardService {
     }
 
     // 보드 삭제 (연관된 리스트와 카드 삭제)
+    @Transactional
     public void deleteBoard(Long boardId, Long userId) {
         Board board = getBoardById(boardId);
 

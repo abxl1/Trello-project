@@ -19,10 +19,11 @@ public class TaskList {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "list_index", nullable = false, unique = true)
+    @Column(name = "list_index", nullable = false)
     private Long index;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,12 +34,14 @@ public class TaskList {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public TaskList(TaskListSaveRequest request) {
-        this.title = request.getTitle();
-    }
-
     @OneToMany(mappedBy = "taskList", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Card> cards = new ArrayList<>();
+
+    public TaskList(TaskListSaveRequest request, Board board, Long index) {
+        this.title = request.getTitle();
+        this.board = board; // 새로운 보드 객체 생성
+        this.index = index;
+    }
 
     public TaskList(String title) {
         this.title = title;
