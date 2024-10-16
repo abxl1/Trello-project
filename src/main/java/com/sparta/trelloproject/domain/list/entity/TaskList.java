@@ -33,12 +33,13 @@ public class TaskList {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public TaskList(TaskListSaveRequest request) {
-        this.title = request.getTitle();
-    }
-
     @OneToMany(mappedBy = "taskList", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Card> cards = new ArrayList<>();
+
+    public TaskList(TaskListSaveRequest request, Board board) {
+        this.title = request.getTitle();
+        this.board = board; // 새로운 보드 객체 생성
+    }
 
     public TaskList(String title) {
         this.title = title;
