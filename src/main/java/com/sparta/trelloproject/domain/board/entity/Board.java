@@ -16,8 +16,8 @@ import java.util.List;
 @Table(name = "boards")
 public class Board {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_id")
-    private Long boardId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "workspace_id", nullable = false)
     private Long workspaceId;
@@ -49,8 +49,8 @@ public class Board {
         this.modifiedAt = LocalDateTime.now(); // 현재 시간으로 수정
     }
 
-    public Board(Long boardId) {
-        this.boardId = boardId;
+    public Board(Long id) {
+        this.id = id;
     }
 
     // 보드 수정

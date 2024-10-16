@@ -54,8 +54,10 @@ public class TaskListService {
 
         Board board = getBoard(boardId); // 보드 확인
 
+        Long index = (long) taskListRepository.countByBoardId(boardId);
+
         // TaskList 생성 후 저장
-        TaskList taskList = new TaskList(request, board);
+        TaskList taskList = new TaskList(request, board, index); // 수정된 생성자 사용
         TaskList savedTaskList = taskListRepository.save(taskList);
 
         return new TaskListSaveResponse(savedTaskList);
