@@ -65,7 +65,7 @@ public class BoardService {
         Board board = new Board(request.getWorkspaceId(), userId, request.getTitle(), request.getBackground());
         boardRepository.save(board);
 
-        return new BoardResponse(board);
+        return new BoardResponse(board, "create");
     }
 
     // 보드 수정
@@ -83,7 +83,7 @@ public class BoardService {
         board.update(request.getTitle(), request.getBackground());
         boardRepository.save(board);
 
-        return new BoardResponse(board);
+        return new BoardResponse(board, "update");
     }
 
     // 보드 조회
