@@ -7,6 +7,7 @@ import com.sparta.trelloproject.domain.member.dto.MemberRequest;
 import com.sparta.trelloproject.domain.member.dto.MemberSaveRequest;
 import com.sparta.trelloproject.domain.member.dto.MemberSaveResponse;
 import com.sparta.trelloproject.domain.member.entity.Member;
+import com.sparta.trelloproject.domain.member.enums.Assign;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;
@@ -15,6 +16,9 @@ import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,9 +35,7 @@ public class MemberService {
             Long workspaceId
     ) {
 
-        User user = userRepository.findByEmail(authUser.getEmail()).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.")
-        );
+        User user = User.fromAuthUser(authUser);
 
         User newUser = userRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND, "추가할 사용자를 찾을 수 없습니다.")
@@ -63,9 +65,7 @@ public class MemberService {
             Long memberId
     ) {
 
-        User user = userRepository.findByEmail(authUser.getEmail()).orElseThrow(
-                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.")
-        );
+        User user = User.fromAuthUser(authUser);
 
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND, "변경할 사용자를 찾을 수 없습니다.")
@@ -75,9 +75,12 @@ public class MemberService {
                 () -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND)
         );
 
-//        if (memberRepository.existsByAssign(request.getAssign())) {
-//            throw new CustomException(ErrorCode.ROLE_NOT_FOUND, "존재하지 않는 권한입니다.");
-//        }
+        if (request.getAssign().equals(Assign.BOARD.name()) ||
+                request.getAssign().equals(Assign.MANAGER.name()) ||
+                request.getAssign().equals(Assign.READ_ONLY.name())
+        ) {
+            throw new CustomException(ErrorCode.ROLE_NOT_FOUND, "존재하지 않는 권한입니다.");
+        }
 
 
         Member updatedMember = memberRepository.save(new Member(member, workspace));

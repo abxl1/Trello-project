@@ -79,7 +79,7 @@ public class WorkspaceService {
 
 
   public User findUserByUserId(AuthUser authUser) {
-    return userRepository.findByUserId(authUser.getUserId())
+    return userRepository.findById(authUser.getUserId())
         .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
   }
 
