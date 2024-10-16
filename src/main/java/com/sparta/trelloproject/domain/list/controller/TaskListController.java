@@ -1,10 +1,10 @@
 package com.sparta.trelloproject.domain.list.controller;
 
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
-import com.sparta.trelloproject.domain.list.dto.TaskListRequest;
-import com.sparta.trelloproject.domain.list.dto.TaskListResponse;
-import com.sparta.trelloproject.domain.list.dto.TaskListSaveRequest;
-import com.sparta.trelloproject.domain.list.dto.TaskListSaveResponse;
+import com.sparta.trelloproject.domain.list.dto.request.TaskListRequest;
+import com.sparta.trelloproject.domain.list.dto.response.TaskListResponse;
+import com.sparta.trelloproject.domain.list.dto.request.TaskListSaveRequest;
+import com.sparta.trelloproject.domain.list.dto.response.TaskListSaveResponse;
 import com.sparta.trelloproject.domain.list.service.TaskListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

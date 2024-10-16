@@ -1,8 +1,8 @@
 package com.sparta.trelloproject.domain.board.controller;
 
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
-import com.sparta.trelloproject.domain.board.request.BoardRequest;
-import com.sparta.trelloproject.domain.board.response.BoardResponse;
+import com.sparta.trelloproject.domain.board.dto.request.BoardRequest;
+import com.sparta.trelloproject.domain.board.dto.response.BoardResponse;
 import com.sparta.trelloproject.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

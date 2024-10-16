@@ -1,7 +1,7 @@
 package com.sparta.trelloproject.domain.list.entity;
 
 import com.sparta.trelloproject.domain.board.entity.Board;
-import com.sparta.trelloproject.domain.list.dto.TaskListSaveRequest;
+import com.sparta.trelloproject.domain.list.dto.request.TaskListSaveRequest;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.card.entity.Card;
 import jakarta.persistence.*;
