@@ -69,8 +69,10 @@ public enum ErrorCode {
 
 
     // Comment Errorcode
-    Comment_FORBIDDEN(HttpStatus.FORBIDDEN, "ㅁㄴㅇㄹㄴㅁㅇㄹ"),
-
+    Comment_FORBIDDEN(HttpStatus.FORBIDDEN, "댓글 작성 권한이 없습니다."),
+    Comment_NOT_FOUND(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
+    Comment_AUTH_FORBIDDEN(HttpStatus.FORBIDDEN,"작성자가 아니므로 수정/삭제가 불가능합니다."),
+    Comment_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 형식의 텍스트/이모지입니다."),
 
     // File Errorcode
 

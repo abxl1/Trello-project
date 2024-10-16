@@ -1,4 +1,4 @@
-package com.sparta.trelloproject.domain.notification.config;
+package com.sparta.trelloproject.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
