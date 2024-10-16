@@ -18,7 +18,6 @@ public class Member {
     private Long id;
 
     @Enumerated(EnumType.STRING) // 사용자 역할을 문자열로 저장
-    @ColumnDefault("BOARD")
     private Assign assign;
 
     @ManyToOne(fetch = FetchType.LAZY)
