@@ -60,7 +60,7 @@ public class CardRepositoryImpl implements CustomCardRepository {
                 .fetch();
 
         List<CommentResponse> commentResponses = commentList.stream()
-                .map(tuple -> new CommentResponse(tuple.get(qComment).getCommentId(), tuple.get(qComment).getText(), tuple.get(qComment).getEmoji(), tuple.get(qComment.user.email)))
+                .map(tuple -> new CommentResponse(tuple.get(qComment).getCommentId(), tuple.get(qComment).getText(), tuple.get(qComment.user.email)))
                 .collect(Collectors.toList());
 
         return new CardDetailResponse(results.get(0).get(qCard.title), results.get(0).get(qCard.description), activityResponses, commentResponses);
