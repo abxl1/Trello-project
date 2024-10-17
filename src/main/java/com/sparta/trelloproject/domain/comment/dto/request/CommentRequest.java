@@ -1,14 +1,15 @@
 package com.sparta.trelloproject.domain.comment.dto.request;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class CommentRequest {
     private String text;
-    private String emoji;
 
-    public CommentRequest(String text, String emoji) {
+    public CommentRequest(String text) {
         this.text = text;
-        this.emoji = emoji;
+
     }
 }

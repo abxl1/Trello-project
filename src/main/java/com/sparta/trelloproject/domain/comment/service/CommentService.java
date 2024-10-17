@@ -35,8 +35,7 @@ public class CommentService {
     private final MemberRepository memberRepository;
 
 //    텍스트와 이모티콘 조건
-    private final String textRegex = "^[a-zA-Z0-9가-힣\\p{Punct}\\s]+$";
-    private final String emojiRegex = "[\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+";
+    private final String textRegex = "^[a-zA-Z0-9가-힣\\p{Punct}\\s\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+$";
 
 //    댓글 작성
     @Transactional
@@ -60,23 +59,20 @@ public class CommentService {
 
         // 텍스트와 이모지 유효성 검증
         validateText(commentRequest.getText());
-        validateEmoji(commentRequest.getEmoji());
 
         Comment comment = new Comment(
                 user,
                 commentRequest.getText(),
-                commentRequest.getEmoji(),
                 card);
 
         commentRepository.save(comment);
 
 //        댓글 작성 후에 알림 전송
-        sendNotification(user.getEmail(),cardId, commentRequest.getText());
+//        sendNotification(user.getEmail(),cardId, commentRequest.getText());
 
         return new CommentResponse(
                 comment.getCommentId(),
                 comment.getText(),
-                comment.getEmoji(),
                 comment.getUser().getEmail());
     }
 
@@ -98,15 +94,13 @@ public class CommentService {
         }
 
         validateText(commentRequest.getText());
-        validateEmoji(commentRequest.getEmoji());
 
-        comment.update(commentRequest.getText(), commentRequest.getEmoji());
+        comment.update(commentRequest.getText());
         commentRepository.save(comment);
 
         return new CommentResponse(
                 comment.getCommentId(),
                 comment.getText(),
-                comment.getEmoji(),
                 comment.getUser().getEmail());
     }
 
@@ -133,16 +127,13 @@ public class CommentService {
             throw new CustomException(ErrorCode.Comment_BAD_REQUEST, "잘못된 형식의 텍스트/이모지입니다.");
         }
     }
-    private void validateEmoji(String emoji) {
-        if (emoji == null || !Pattern.matches(emojiRegex, emoji)) {
-            throw new CustomException(ErrorCode.Comment_BAD_REQUEST, "잘못된 형식의 텍스트/이모지입니다.");
-        }
-    }
+
+}
 
 //    알림 전송
-    private void sendNotification(String email, Long cardId, String commentText) {
+//    private void sendNotification(String email, Long cardId, String commentText) {
 //        알림 메시지 생성
-        notificationService.sendSlackNotification(email, cardId.toString(), commentText);
-        notificationService.sendDiscordNotification(email, cardId.toString(), commentText);
-    }
-}
+//        notificatonService.sendSlackNotification(email, cardId.toString(), commentText);
+//        notificationService.sendDiscordNotification(email, cardId.toString(), commentText);
+//    }
+
