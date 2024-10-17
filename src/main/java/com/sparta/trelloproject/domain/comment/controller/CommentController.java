@@ -46,6 +46,9 @@ public class CommentController {
             @PathVariable Long cardId,
             @PathVariable Long commentId) {
         commentService.deleteComment(authUser, commentId);
+        {
+
+        }
         return ResponseEntity.noContent().build();
     }
 }

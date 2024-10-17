@@ -40,7 +40,6 @@ public class CardRepositoryImpl implements CustomCardRepository{
                                 Projections.constructor(CommentResponse.class,
                                         comment.user,
                                         comment.text,
-                                        comment.emoji,
                                         comment.createdAt
                                 )
                         )
