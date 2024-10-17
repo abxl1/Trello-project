@@ -6,7 +6,6 @@ import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -37,5 +36,9 @@ public class Member {
     public Member(Member member, Workspace workspace) {
         this.assign = member.assign;
         this.workspace = workspace;
+    }
+
+    public void changeAssign(Assign newAssign) {
+        this.assign = newAssign;
     }
 }
