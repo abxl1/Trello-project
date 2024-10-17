@@ -20,4 +20,5 @@ public class CardActivityService {
         cardActivityRepository.save(cardActivity);
 
     }
+
 }
