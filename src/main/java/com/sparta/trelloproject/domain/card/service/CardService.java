@@ -10,6 +10,8 @@ import com.sparta.trelloproject.domain.card.dto.request.CardUpdateRequest;
 import com.sparta.trelloproject.domain.card.dto.response.CardDetailResponse;
 import com.sparta.trelloproject.domain.card.dto.response.CardSaveResponse;
 import com.sparta.trelloproject.domain.card.entity.Card;
+import com.sparta.trelloproject.domain.card.entity.CardAssignee;
+import com.sparta.trelloproject.domain.card.repository.CardAssigneeRepository;
 import com.sparta.trelloproject.domain.card.repository.CardRepository;
 import com.sparta.trelloproject.domain.list.entity.TaskList;
 import com.sparta.trelloproject.domain.list.repository.TaskListRepository;
@@ -17,6 +19,7 @@ import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
 import com.sparta.trelloproject.domain.notification.service.NotificationService;
 import com.sparta.trelloproject.domain.user.entity.User;
+import com.sparta.trelloproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,8 @@ public class CardService {
     private final TaskListRepository taskListRepository;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
+    private final CardAssigneeRepository cardAssigneeRepository;
+    private final UserRepository userRepository;
 
     @CreateActivity
     @Transactional
@@ -39,28 +44,35 @@ public class CardService {
 
         User user = User.fromAuthUser(authUser);
 
-//        Member member = findMember(user);
+        Member member = findMember(user);
 
         TaskList taskList = findTaskList(listId);
 
         Long cardIndex = (long) taskList.getCards().size() + 1;
 
-        Card saveCard = cardRepository.save(new Card(request, cardIndex, taskList));
+        Card card = new Card(request, cardIndex, taskList);
+
+        if(request.getAssignUser() != null){
+            User assignUser = findUser(request.getAssignUser());
+            designate(card, assignUser);
+        }
+
+        cardRepository.save(card);
 
         // 카드 생성 알림을 NotificationService에서 처리
-        notificationService.sendCardCreationNotification(user.getEmail(), boardId, listId, saveCard.getId());
+        notificationService.sendCardCreationNotification(user.getEmail(), boardId, listId, card.getId());
 
-        return new CardSaveResponse(saveCard);
+        return new CardSaveResponse(card);
 
     }
 
-//    @CreateActivity
+    @CreateActivity
     @Transactional
     public CardSaveResponse updateCard(AuthUser authUser, Long listId, Long cardId, CardUpdateRequest request) {
 
         User user = User.fromAuthUser(authUser);
 
-//        Member member = findMember(user);
+        Member member = findMember(user);
 
         TaskList taskList = findTaskList(listId);
 
@@ -72,6 +84,11 @@ public class CardService {
 
         if (request.getIndex() != null) {
             card.changeCardIndex(taskList, card, listId, request.getIndex(), totalCardIndex);
+        }
+
+        if(request.getAssignUser() != null){
+            User assignUser = findUser(request.getAssignUser());
+            designate(card, assignUser);
         }
 
         return new CardSaveResponse(card);
@@ -89,11 +106,24 @@ public class CardService {
 
         User user = User.fromAuthUser(authUser);
 
-//        Member member = findMember(user);
+        Member member = findMember(user);
 
         Card card = findCard(cardId);
 
         cardRepository.delete(card);
+    }
+
+    // 카드 담당자 지정
+    public void designate(Card card, User user){
+        CardAssignee cardAssignee = new CardAssignee(card, user);
+        cardAssigneeRepository.save(cardAssignee);
+
+    }
+
+    // User 조회
+    public User findUser(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     // TaskList 조회

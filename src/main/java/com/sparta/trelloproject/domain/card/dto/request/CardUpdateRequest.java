@@ -21,4 +21,6 @@ public class CardUpdateRequest {
 
     private Long index;
 
+    private Long assignUser;
+
 }

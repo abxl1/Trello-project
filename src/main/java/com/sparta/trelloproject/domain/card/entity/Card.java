@@ -8,11 +8,10 @@ import com.sparta.trelloproject.domain.list.entity.TaskList;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -46,10 +45,11 @@ public class Card {
     private List<CardAssignee> cardAssignees = new ArrayList<>();
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CardActivity> cardActivities = new ArrayList<>();
+    private Set<CardActivity> cardActivities = new HashSet<>();
 
     @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
+    @BatchSize(size = 10)
+    private Set<Comment> comments = new HashSet<>();
 
     public Card(CardSaveRequest request, Long cardIndex, TaskList taskList) {
         this.title = request.getTitle();

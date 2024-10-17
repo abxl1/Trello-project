@@ -72,7 +72,7 @@ class CardServiceTest {
         Long listId = 1L;
         AuthUser authUser = new AuthUser(1L, "emain", UserRole.ROLE_ADMIN);
         CardSaveRequest request = new CardSaveRequest("Title", "Description", null);
-        Card card = new Card(request, 1L, new TaskList());
+        Card card = new Card(request, 1L);
 
         when(taskListRepository.findById(listId)).thenReturn(Optional.of(new TaskList()));
         when(cardRepository.save(any(Card.class))).thenReturn(card);
@@ -94,7 +94,7 @@ class CardServiceTest {
         Long listId = 1L;
         AuthUser authUser = new AuthUser(1L, "emain", UserRole.ROLE_ADMIN);
         CardSaveRequest request = new CardSaveRequest("Title", "Description", null);
-        Card card = new Card(request, 1L, new TaskList());
+        Card card = new Card(request, 1L);
 
         CardUpdateRequest updateRequest = new CardUpdateRequest("title update", "description update", null, null);
 
@@ -118,9 +118,9 @@ class CardServiceTest {
         Long listId = 1L;
         AuthUser authUser = new AuthUser(1L, "emain", UserRole.ROLE_ADMIN);
 
-        Card card1 = new Card(new CardSaveRequest("Title 1", "Description 1", null), 1L, new TaskList());
-        Card card2 = new Card(new CardSaveRequest("Title 2", "Description 2", null), 2L, new TaskList());
-        Card card3 = new Card(new CardSaveRequest("Title 3", "Description 3", null), 3L, new TaskList());
+        Card card1 = new Card(new CardSaveRequest("Title 1", "Description 1", null), 1L);
+        Card card2 = new Card(new CardSaveRequest("Title 2", "Description 2", null), 2L);
+        Card card3 = new Card(new CardSaveRequest("Title 3", "Description 3", null), 3L);
 
         CardUpdateRequest updateRequest = new CardUpdateRequest(null, null, null, 3L);
 
