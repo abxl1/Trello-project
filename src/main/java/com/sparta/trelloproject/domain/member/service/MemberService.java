@@ -5,6 +5,7 @@ import com.sparta.trelloproject.common.exception.ErrorCode;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.member.dto.request.MemberRequest;
 import com.sparta.trelloproject.domain.member.dto.request.MemberSaveRequest;
+import com.sparta.trelloproject.domain.member.dto.response.MemberResponse;
 import com.sparta.trelloproject.domain.member.dto.response.MemberSaveResponse;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.enums.Assign;
@@ -14,13 +15,12 @@ import com.sparta.trelloproject.domain.user.repository.UserRepository;
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -72,7 +72,7 @@ public class MemberService {
      * @return HTTPStatus.ok
      */
     @Transactional
-    public MemberSaveResponse updateMember(
+    public MemberResponse updateMember(
             AuthUser authUser,
             MemberRequest request,
             Long workspaceId,
@@ -89,6 +89,10 @@ public class MemberService {
                 () -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND)
         );
 
+        if (member.getAssign().name().equals(request.getAssign())) {
+            throw new CustomException(ErrorCode.SAME_ROLE_REQUEST, "같은 권한으로 변경할 수 없습니다.");
+        }
+
         if (!request.getAssign().equals(Assign.BOARD.name()) &&
                 !request.getAssign().equals(Assign.MANAGER.name()) &&
                 !request.getAssign().equals(Assign.READ_ONLY.name())
@@ -102,6 +106,6 @@ public class MemberService {
             memberRepository.save(member);
         }
 
-        return new MemberSaveResponse(member);
+        return new MemberResponse(member);
     }
 }
