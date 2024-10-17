@@ -27,6 +27,13 @@ public class MemberService {
     private final UserRepository userRepository;
     private final WorkspaceRepository workspaceRepository;
 
+    /**
+     * 멤버 추가하기
+     * @param authUser 인증된 사용자
+     * @param request email
+     * @param workspaceId 추가할 멤버의 대상 워크스페이스
+     * @return HTTPStatus.created
+     */
     @Transactional
     public MemberSaveResponse saveMember(
             AuthUser authUser,
@@ -56,6 +63,14 @@ public class MemberService {
         return new MemberSaveResponse(member);
     }
 
+    /**
+     * 멤버 역할 변경하기
+     * @param authUser 인증된 사용자
+     * @param request email, assign
+     * @param workspaceId 변경할 멤버의 대상 워크스페이스
+     * @param memberId 변결할 멤버의 아이디
+     * @return HTTPStatus.ok
+     */
     @Transactional
     public MemberSaveResponse updateMember(
             AuthUser authUser,
@@ -65,10 +80,6 @@ public class MemberService {
     ) {
 
         User user = User.fromAuthUser(authUser);
-
-//        Member wsmember = memberRepository.findByUserId(authUser.getUserId()).orElseThrow(
-//                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "요청한 사용자를 찾을 수 없습니다.")
-//        );
 
         Member member = memberRepository.findByUserId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND, "변경할 사용자를 찾을 수 없습니다.")
@@ -84,10 +95,6 @@ public class MemberService {
         ) {
             throw new CustomException(ErrorCode.ROLE_NOT_FOUND, "존재하지 않는 권한입니다.");
         }
-
-//        if (!wsmember.getAssign().equals(Assign.MANAGER)) {
-//            throw new CustomException(ErrorCode.ROLE_ERROR, "워크스페이스 멤버만 접근할 수 있습니다.");
-//        }
 
         Assign newAssign = Assign.valueOf(request.getAssign());
         if (member.getAssign() != Assign.MANAGER) {
