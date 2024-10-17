@@ -1,8 +1,8 @@
 package com.sparta.trelloproject.domain.board.controller;
 
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
-import com.sparta.trelloproject.domain.board.request.BoardRequest;
-import com.sparta.trelloproject.domain.board.response.BoardResponse;
+import com.sparta.trelloproject.domain.board.dto.request.BoardRequest;
+import com.sparta.trelloproject.domain.board.dto.response.BoardResponse;
 import com.sparta.trelloproject.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,12 +53,12 @@ public class BoardController {
 
     // 보드 삭제
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Void> deleteBoard(
+    public ResponseEntity<BoardResponse.BoardDeleteResponse> deleteBoard(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long workspaceId,
             @PathVariable Long boardId) {
 
-        boardService.deleteBoard(boardId, authUser.getUserId());
-        return ResponseEntity.noContent().build();
+        BoardResponse.BoardDeleteResponse response = boardService.deleteBoard(boardId, authUser.getUserId());
+        return ResponseEntity.ok(response);
     }
 }
