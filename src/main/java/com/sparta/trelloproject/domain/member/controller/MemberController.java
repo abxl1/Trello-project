@@ -3,6 +3,7 @@ package com.sparta.trelloproject.domain.member.controller;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.member.dto.request.MemberRequest;
 import com.sparta.trelloproject.domain.member.dto.request.MemberSaveRequest;
+import com.sparta.trelloproject.domain.member.dto.response.MemberResponse;
 import com.sparta.trelloproject.domain.member.dto.response.MemberSaveResponse;
 import com.sparta.trelloproject.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class MemberController {
     }
 
     @PatchMapping("/members/{memberId}")
-    public ResponseEntity<MemberSaveResponse> updateMember(
+    public ResponseEntity<MemberResponse> updateMember(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestBody MemberRequest request,
             @PathVariable Long workspaceId,
