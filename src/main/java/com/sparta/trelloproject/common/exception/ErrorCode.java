@@ -58,7 +58,7 @@ public enum ErrorCode {
     BOARD_READ_ONLY_MEMBER(HttpStatus.FORBIDDEN, "읽기 전용 권한입니다"),
 
     // List Errorcode
-
+    LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "조회 실패 : %s"),
 
 
 
@@ -103,6 +103,6 @@ public enum ErrorCode {
     }
 
     public String customMessage(String detail) {
-        return String.format(message, detail); // 동적으로 메시지 포맷팅
+        return String.format(message, detail);
     }
 }
