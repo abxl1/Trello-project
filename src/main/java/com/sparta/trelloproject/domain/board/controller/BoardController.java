@@ -24,7 +24,7 @@ public class BoardController {
             @PathVariable Long workspaceId,
             @RequestBody BoardRequest request) {
 
-        BoardResponse response = boardService.createBoard(request, authUser.getUserId());
+        BoardResponse response = boardService.createBoard(request, workspaceId, authUser.getUserId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

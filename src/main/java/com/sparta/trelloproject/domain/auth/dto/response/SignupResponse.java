@@ -1,4 +1,4 @@
-package com.sparta.trelloproject.domain.auth.dto;
+package com.sparta.trelloproject.domain.auth.dto.response;
 
 import com.sparta.trelloproject.domain.user.enums.UserRole;
 import lombok.Getter;

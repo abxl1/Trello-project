@@ -8,13 +8,14 @@ import com.sparta.trelloproject.domain.list.dto.response.TaskListSaveResponse;
 import com.sparta.trelloproject.domain.list.service.TaskListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/boards/{boardId}")
+@RequiredArgsConstructor
 public class TaskListController {
 
     private final TaskListService taskListService;
@@ -22,15 +23,16 @@ public class TaskListController {
     /**
      * @param request 리스트 생성 시 필요한 데이터
      * @param boardId 생성할 리스트의 대상 보드
-     * @return HTTPStatus.ok
+     * @return HTTPStatus.CREATED
      */
     @PostMapping("/lists")
     public ResponseEntity<TaskListSaveResponse> saveList(
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestBody TaskListSaveRequest request,
-            @PathVariable("boardId") Long boardId
+            @PathVariable Long boardId,
+            @RequestBody TaskListSaveRequest request
     ) {
-        return ResponseEntity.ok(taskListService.saveList(authUser, request, boardId));
+        TaskListSaveResponse response = taskListService.saveList(authUser, request, boardId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -49,19 +51,19 @@ public class TaskListController {
         return ResponseEntity.ok(taskListService.getLists(authUser, page, size, boardId));
     }
 
-    /**
-     * @param boardId 생성할 리스트의 대상 보드
-     * @param listId 조회할 리스트의 아이디
-     * @return HTTPStatus.ok
-     */
-    @GetMapping("/lists/{listsId}")
-    public ResponseEntity<TaskListResponse> getList(
-            @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable("boardId") Long boardId,
-            @PathVariable("boardId") Long listId
-    ) {
-        return ResponseEntity.ok(taskListService.getList(authUser, boardId, listId));
-    }
+//    /**
+//     * @param boardId 생성할 리스트의 대상 보드
+//     * @param listId 조회할 리스트의 아이디
+//     * @return HTTPStatus.ok
+//     */
+//    @GetMapping("/lists/{listsId}")
+//    public ResponseEntity<TaskListResponse> getList(
+//            @AuthenticationPrincipal AuthUser authUser,
+//            @PathVariable("boardId") Long boardId,
+//            @PathVariable("boardId") Long listId
+//    ) {
+//        return ResponseEntity.ok(taskListService.getList(authUser, boardId, listId));
+//    }
 
     /**
      * @param request 리스트 수정 시 필요한 데이터

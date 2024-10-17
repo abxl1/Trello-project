@@ -1,9 +1,9 @@
 package com.sparta.trelloproject.domain.member.controller;
 
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
-import com.sparta.trelloproject.domain.member.dto.MemberRequest;
-import com.sparta.trelloproject.domain.member.dto.MemberSaveRequest;
-import com.sparta.trelloproject.domain.member.dto.MemberSaveResponse;
+import com.sparta.trelloproject.domain.member.dto.request.MemberRequest;
+import com.sparta.trelloproject.domain.member.dto.request.MemberSaveRequest;
+import com.sparta.trelloproject.domain.member.dto.response.MemberSaveResponse;
 import com.sparta.trelloproject.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

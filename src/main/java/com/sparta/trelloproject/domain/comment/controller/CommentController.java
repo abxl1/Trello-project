@@ -29,7 +29,7 @@ public class CommentController {
     }
 
 //    댓글 수정
-    @PutMapping("/{commentId}")
+    @PatchMapping("/{commentId}")
     public ResponseEntity<CommentResponse> updateComment(
             @AuthenticationPrincipal AuthUser authUser,
             @PathVariable Long cardId,

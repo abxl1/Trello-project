@@ -16,7 +16,7 @@ public class BoardResponse {
 
     // 보드 조회 시 응답
     public BoardResponse(Board board) {
-        this.boardId = board.getBoardId();
+        this.boardId = board.getId();
         this.title = board.getTitle();
         this.background = board.getBackground();
         this.createdAt = board.getCreatedAt();
@@ -26,7 +26,7 @@ public class BoardResponse {
 
     // 보드 생성 및 수정 시 응답
     public BoardResponse(Board board, String action) {
-        this.boardId = board.getBoardId();
+        this.boardId = board.getId();
         this.title = board.getTitle();
         this.background = board.getBackground();
         this.createdAt = board.getCreatedAt();

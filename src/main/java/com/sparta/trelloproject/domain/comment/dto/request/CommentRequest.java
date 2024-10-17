@@ -6,4 +6,9 @@ import lombok.Getter;
 public class CommentRequest {
     private String text;
     private String emoji;
+
+    public CommentRequest(String text, String emoji) {
+        this.text = text;
+        this.emoji = emoji;
+    }
 }
