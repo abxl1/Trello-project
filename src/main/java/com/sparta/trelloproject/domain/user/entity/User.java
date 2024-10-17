@@ -74,6 +74,6 @@ public class User extends Timestamped {
     }
 
     public void toggleDelete() {
-        this.isDeleted = !this.isDeleted;
+        this.isDeleted = true;
     }
 }
