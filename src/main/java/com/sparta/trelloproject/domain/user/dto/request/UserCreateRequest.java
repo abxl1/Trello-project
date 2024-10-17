@@ -1,4 +1,4 @@
-package com.sparta.trelloproject.domain.user.request;
+package com.sparta.trelloproject.domain.user.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

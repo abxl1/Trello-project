@@ -1,9 +1,9 @@
-package com.sparta.trelloproject.domain.member.dto;
+package com.sparta.trelloproject.domain.member.dto.request;
 
 import lombok.Getter;
 
 @Getter
 public class MemberRequest {
     private String email;
-    private String Assign;
+    private String assign;
 }

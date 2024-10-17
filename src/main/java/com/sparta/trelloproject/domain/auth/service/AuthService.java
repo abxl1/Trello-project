@@ -3,10 +3,11 @@ package com.sparta.trelloproject.domain.auth.service;
 import com.sparta.trelloproject.common.exception.CustomException;
 import com.sparta.trelloproject.common.exception.ErrorCode;
 import com.sparta.trelloproject.config.JwtUtil;
-import com.sparta.trelloproject.domain.auth.dto.SigninRequest;
-import com.sparta.trelloproject.domain.auth.dto.SigninResponse;
-import com.sparta.trelloproject.domain.auth.dto.SignupRequest;
-import com.sparta.trelloproject.domain.auth.dto.SignupResponse;
+import com.sparta.trelloproject.domain.auth.dto.request.SigninRequest;
+import com.sparta.trelloproject.domain.auth.dto.response.SigninResponse;
+import com.sparta.trelloproject.domain.auth.dto.request.SignupRequest;
+import com.sparta.trelloproject.domain.auth.dto.response.SignupResponse;
+import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;
@@ -60,5 +61,13 @@ public class AuthService {
         String bearerToken = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
 
         return new SigninResponse(bearerToken);
+    }
+
+    @Transactional
+    public void withdrawal(AuthUser authUser) {
+        User user = userRepository.findById(authUser.getUserId()).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.")
+        );
+        user.toggleDelete();
     }
 }

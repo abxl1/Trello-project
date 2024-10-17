@@ -2,7 +2,7 @@ package com.sparta.trelloproject.domain.user.service;
 
 import com.sparta.trelloproject.common.exception.CustomException;
 import com.sparta.trelloproject.common.exception.ErrorCode;
-import com.sparta.trelloproject.domain.user.dto.UserRoleChangeRequest;
+import com.sparta.trelloproject.domain.user.dto.request.UserRoleChangeRequest;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;

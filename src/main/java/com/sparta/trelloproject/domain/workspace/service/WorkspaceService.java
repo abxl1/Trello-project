@@ -1,22 +1,25 @@
 package com.sparta.trelloproject.domain.workspace.service;
 
 import com.sparta.trelloproject.common.exception.CustomException;
+import com.sparta.trelloproject.common.exception.ErrorCode;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.member.entity.Member;
+import com.sparta.trelloproject.domain.member.enums.Assign;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
+import com.sparta.trelloproject.domain.user.dto.request.UserCreateRequest;
+import com.sparta.trelloproject.domain.user.dto.request.UserGetRequest;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;
-import com.sparta.trelloproject.domain.user.request.UserGetRequest;
+import com.sparta.trelloproject.domain.user.request.UserUpdateRequest;
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
-import com.sparta.trelloproject.domain.user.request.UserCreateRequest;
-import com.sparta.trelloproject.domain.workspace.response.WorkspaceResponse;
+import com.sparta.trelloproject.domain.workspace.dto.response.WorkspaceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
-import static com.sparta.trelloproject.common.exception.ErrorCode.*;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,53 +29,97 @@ public class WorkspaceService {
   private final UserRepository userRepository;
   private final MemberRepository memberRepository;
 
-  // 워크스페이스 조회
+  // 워크스페이스 조회 로직
   public WorkspaceResponse getWorkspace(AuthUser authUser, UserGetRequest userGetRequest) {
-    // 멤버 조회
-    Member member = findMemberByUserId(authUser);
+    // 멤버목록 조회
+    List<Member> members = findMemberByUserId(authUser);
 
-    // 모든 워크스페이스 조회
-    List<Workspace> workspaces = findWorkspacesByMember(member);
-
-    // 유저가 조회하고자 하는 ID 워크스페이스 조회 (get 이라 -1)
-    Long index = userGetRequest.getWorkspaceId() - 1;
-    Workspace workspace = workspaces.get(index.intValue());
-
-    if (index < 0 || index >= workspaces.size()) {
-      throw new CustomException(WORKSPACE_NOT_FOUND);
+    // 유저가 조회하고자 하는 ID 워크스페이스 조회
+    Workspace workspace = null;
+    for (Member member : members) {
+      workspace = findWorkspaceByMember(member);
+      if (workspace.getId().equals(userGetRequest.getWorkspaceId())) {
+        workspace = member.getWorkspace();
+        break;
+      }
+    }
+    if (workspace == null) {
+      throw new CustomException(ErrorCode.WORKSPACE_NOT_FOUND);
     }
 
     return new WorkspaceResponse(workspace);
   }
 
 
-  // 워크스페이스 생성
+  // 워크스페이스 생성 로직
+  @Transactional
   public WorkspaceResponse createWorkspace(AuthUser authUser, UserCreateRequest userCreateRequest) {
     // 유저 조회
     User user = findUserById(authUser);
 
     // ADMIN 권한이 아니라면 예외발생
-    if(!user.getUserRole().toString().equals("ROLE_ADMIN")){
-      throw new CustomException(PERMISSION_ERROR);
+    if (!user.getUserRole().toString().equals("ROLE_ADMIN")) {
+      throw new CustomException(ErrorCode.PERMISSION_ERROR);
     }
 
-    // 워크 스페이스 생성
-    Workspace workspace = new Workspace(userCreateRequest.getTitle(), userCreateRequest.getExplaination());
+    // 워크스페이스 생성
+    Workspace workspace = new Workspace(userCreateRequest.getTitle(), userCreateRequest.getExplaination(), user);
 
     // 워크스페이스 저장
     workspaceRepository.save(workspace);
 
+    // 멤버 추가
+    Member member = new Member(user, workspace);
+    workspace.getMember().add(member);
+
+    // 멤버 권한을 workspace로
+    member.startAssign();
+    memberRepository.save(member);
+
     return new WorkspaceResponse(workspace);
   }
 
-  // 워크스페이스 삭제
-  public void deleteWorkspace(AuthUser authUser, Long workspaceId) {
-    // 유저 조회
+  // 워크스페이스 수정 로직
+  @Transactional
+  public WorkspaceResponse updateWorkspace(AuthUser authUser, UserUpdateRequest userUpdateRequest) {
     User user = findUserById(authUser);
 
     // ADMIN 권한이 아니라면 예외발생
-    if(!user.getUserRole().toString().equals("ROLE_ADMIN")){
-      throw new CustomException(PERMISSION_ERROR);
+    if (!user.getUserRole().toString().equals("ROLE_ADMIN")) {
+      throw new CustomException(ErrorCode.PERMISSION_ERROR);
+    }
+
+    // 멤버목록 조회
+    List<Member> members = findMemberByUserId(authUser);
+
+    // 유저가 조회하고자 하는 ID 워크스페이스 조회
+    Workspace workspace = null;
+    for (Member member : members) {
+      workspace = findWorkspaceByMember(member);
+      if (workspace.getId().equals(userUpdateRequest.getWorkspaceId())) {
+        workspace = member.getWorkspace();
+        break;
+      }
+    }
+    if (workspace == null) {
+      throw new CustomException(ErrorCode.WORKSPACE_NOT_FOUND);
+    }
+
+    workspace.update(userUpdateRequest);
+
+    return new WorkspaceResponse(workspace);
+  }
+
+  // 워크스페이스 삭제 로직
+  @Transactional
+  public void deleteWorkspace(AuthUser authUser, Long workspaceId) {
+    // 멤버 조회
+    Member member = findMemberByUserIdAndWorkspaceId(authUser, workspaceId).orElseThrow(
+        () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+    // MANAGER 권한이 아니라면 예외발생
+    if (!member.getAssign().equals(Assign.MANAGER)) {
+      throw new CustomException(ErrorCode.PERMISSION_ERROR);
     }
 
     workspaceRepository.deleteById(workspaceId);
@@ -84,26 +131,38 @@ public class WorkspaceService {
 
   public User findUserById(AuthUser authUser) {
     return userRepository.findById(authUser.getUserId())
-        .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
   }
 
-  private Member findMemberByUserId(AuthUser authUser) {
-    return memberRepository.findByUserId(authUser.getUserId())
-        .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+  private List<Member> findMemberByUserId(AuthUser authUser) {
+    List<Member> members = memberRepository.findAllByUserId(authUser.getUserId());
+
+    if (members.isEmpty()) {
+      throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+    }
+    return members;
   }
 
   private List<Workspace> findWorkspacesByMember(Member member) {
 
     List<Workspace> workspaces = workspaceRepository.findAllByMember(member);
 
-    if(workspaces.isEmpty()) {
-      String errorMessage = WORKSPACE_NOT_FOUND.customMessage("멤버 ID = " + member.getId());
-      throw new CustomException(WORKSPACE_NOT_FOUND, errorMessage);
+    if (workspaces.isEmpty()) {
+      String errorMessage = ErrorCode.WORKSPACE_NOT_FOUND.customMessage("멤버 ID = " + member.getId());
+      throw new CustomException(ErrorCode.WORKSPACE_NOT_FOUND, errorMessage);
     }
 
     return workspaces;
   }
 
+  private Workspace findWorkspaceByMember(Member member) {
+    return workspaceRepository.findByMember(member).orElseThrow(
+        () -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND));
+  }
+
+  private Optional<Member> findMemberByUserIdAndWorkspaceId(AuthUser authUser, Long workspaceId) {
+    return memberRepository.findByUserIdAndWorkspaceId(authUser.getUserId(), workspaceId);
+  }
 
 
 }

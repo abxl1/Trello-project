@@ -53,4 +53,8 @@ public class Comment {
         this.emoji = emoji;
         this.modifiedAt = LocalDateTime.now();
     }
+
+    public void setCommentId(Long commentId) {
+
+    }
 }
