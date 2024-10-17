@@ -15,6 +15,7 @@ import com.sparta.trelloproject.domain.list.entity.TaskList;
 import com.sparta.trelloproject.domain.list.repository.TaskListRepository;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
+import com.sparta.trelloproject.domain.notification.service.NotificationService;
 import com.sparta.trelloproject.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class CardService {
     private final CardRepository cardRepository;
     private final TaskListRepository taskListRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     @CreateActivity
     @Transactional
@@ -44,6 +46,9 @@ public class CardService {
         Long cardIndex = (long) taskList.getCards().size() + 1;
 
         Card saveCard = cardRepository.save(new Card(request, cardIndex, taskList));
+
+        // 카드 생성 알림을 NotificationService에서 처리
+        notificationService.sendCardCreationNotification(user.getEmail(), boardId, listId, saveCard.getId());
 
         return new CardSaveResponse(saveCard);
 

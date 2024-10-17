@@ -30,12 +30,13 @@ public enum ErrorCode {
     SIGNIN_ERROR(HttpStatus.BAD_REQUEST, "로그인 실패 : %s"),
 
     // Role ErrorCode
-    PERMISSION_ERROR(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+    PERMISSION_ERROR(HttpStatus.FORBIDDEN, "권한 없음 : %s"),
 
 
 
     // Member ErrorCode
     ROLE_ERROR(HttpStatus.FORBIDDEN, "권한 없음 : %s"),
+    SAME_ROLE_REQUEST(HttpStatus.BAD_REQUEST, "중복 요청 불가 : %s"),
     ROLE_NOT_FOUND(HttpStatus.NOT_FOUND, "조회 실패 : %s"),
     SELF_REQUEST_FORBIDDEN(HttpStatus.FORBIDDEN, "본인 요청 불가 : %s"),
     USER_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "중복 요청 불가 : %s"),
@@ -80,6 +81,7 @@ public enum ErrorCode {
 
 
     // Alarm Errorcode
+    Notification_NOTIFICATION_FAILED(HttpStatus.BAD_REQUEST,"알림 전송에 실패했습니다."),
 
 
 

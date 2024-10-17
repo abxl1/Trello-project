@@ -34,10 +34,10 @@ public class CommentService {
     private final CardRepository cardRepository;
     private final MemberRepository memberRepository;
 
-//    텍스트와 이모티콘 조건
+    //    텍스트와 이모티콘 조건
     private final String textRegex = "^[a-zA-Z0-9가-힣\\p{Punct}\\s\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+$";
 
-//    댓글 작성
+    //    댓글 작성
     @Transactional
     public CommentResponse saveComment(AuthUser authUser, Long cardId, CommentRequest commentRequest) {
 
@@ -50,7 +50,7 @@ public class CommentService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CARD_NOT_FOUND, "해당 카드를 찾을 수 없습니다."));
 
         Member member = memberRepository.findByUserId(
-                authUser.getUserId()).orElseThrow(()-> new CustomException(ErrorCode.MEMBER_NOT_FOUND,"멤버를 찾을 수 없습니다."));
+                authUser.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND, "멤버를 찾을 수 없습니다."));
 
 //      예외처리 ( 읽기 전용 유저 )
         if (member.getAssign().toString().equals(Assign.READ_ONLY)) {
@@ -68,7 +68,7 @@ public class CommentService {
         commentRepository.save(comment);
 
 //        댓글 작성 후에 알림 전송
-//        sendNotification(user.getEmail(),cardId, commentRequest.getText());
+        sendNotification(user.getEmail(), cardId, commentRequest.getText());
 
         return new CommentResponse(
                 comment.getCommentId(),
@@ -81,15 +81,15 @@ public class CommentService {
     public CommentResponse updateComment(AuthUser authUser, Long commentId, CommentRequest commentRequest) {
 
         User user = userRepository.findById(
-                        authUser.getUserId()).orElseThrow(
-                                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                authUser.getUserId()).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
         Comment comment = commentRepository.findById(
                 commentId).orElseThrow(
-                        () -> new CustomException(ErrorCode.Comment_NOT_FOUND, "댓글을 찾을 수 없습니다"));
+                () -> new CustomException(ErrorCode.Comment_NOT_FOUND, "댓글을 찾을 수 없습니다"));
 
 //        작성자 확인
-        if (!user.equals(comment.getUser())){
+        if (!user.equals(comment.getUser())) {
             throw new CustomException(ErrorCode.Comment_AUTH_FORBIDDEN, "작성자가 아니므로 수정/삭제가 불가능합니다.");
         }
 
@@ -114,7 +114,7 @@ public class CommentService {
                 commentId).orElseThrow(
                 () -> new CustomException(ErrorCode.Comment_NOT_FOUND, "댓글을 찾을 수 없습니다"));
 //        작성자 확인
-        if (!user.equals(comment.getUser())){
+        if (!user.equals(comment.getUser())) {
             throw new CustomException(ErrorCode.Comment_AUTH_FORBIDDEN, "작성자가 아니므로 수정/삭제가 불가능합니다.");
         }
         commentRepository.delete(comment);
@@ -128,12 +128,16 @@ public class CommentService {
         }
     }
 
+
+    //    알림 전송
+//    알림 메시지 생성
+    @Transactional
+    protected void sendNotification(String email, Long cardId, String commentText) {
+        try {
+            notificationService.sendSlackNotification(email, cardId.toString(), commentText);
+            notificationService.sendDiscordNotification(email, cardId.toString(), commentText);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.Notification_NOTIFICATION_FAILED, "알림 전송에 실패했습니다.");
+        }
+    }
 }
-
-//    알림 전송
-//    private void sendNotification(String email, Long cardId, String commentText) {
-//        알림 메시지 생성
-//        notificatonService.sendSlackNotification(email, cardId.toString(), commentText);
-//        notificationService.sendDiscordNotification(email, cardId.toString(), commentText);
-//    }
-
