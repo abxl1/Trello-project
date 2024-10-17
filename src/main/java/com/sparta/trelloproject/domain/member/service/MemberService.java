@@ -3,9 +3,9 @@ package com.sparta.trelloproject.domain.member.service;
 import com.sparta.trelloproject.common.exception.CustomException;
 import com.sparta.trelloproject.common.exception.ErrorCode;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
-import com.sparta.trelloproject.domain.member.dto.MemberRequest;
-import com.sparta.trelloproject.domain.member.dto.MemberSaveRequest;
-import com.sparta.trelloproject.domain.member.dto.MemberSaveResponse;
+import com.sparta.trelloproject.domain.member.dto.request.MemberRequest;
+import com.sparta.trelloproject.domain.member.dto.request.MemberSaveRequest;
+import com.sparta.trelloproject.domain.member.dto.response.MemberSaveResponse;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.enums.Assign;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
@@ -14,12 +14,11 @@ import com.sparta.trelloproject.domain.user.repository.UserRepository;
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -45,7 +44,7 @@ public class MemberService {
                 () -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND)
         );
 
-        if (user.getEmail().equals(authUser.getEmail())) {
+        if (newUser.getEmail().equals(authUser.getEmail())) {
             throw new CustomException(ErrorCode.SELF_REQUEST_FORBIDDEN, "본인을 초대할 수 없습니다.");
         }
 
@@ -67,7 +66,11 @@ public class MemberService {
 
         User user = User.fromAuthUser(authUser);
 
-        Member member = memberRepository.findById(memberId).orElseThrow(
+//        Member wsmember = memberRepository.findByUserId(authUser.getUserId()).orElseThrow(
+//                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "요청한 사용자를 찾을 수 없습니다.")
+//        );
+
+        Member member = memberRepository.findByUserId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND, "변경할 사용자를 찾을 수 없습니다.")
         );
 
@@ -75,15 +78,23 @@ public class MemberService {
                 () -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND)
         );
 
-        if (request.getAssign().equals(Assign.BOARD.name()) ||
-                request.getAssign().equals(Assign.MANAGER.name()) ||
-                request.getAssign().equals(Assign.READ_ONLY.name())
+        if (!request.getAssign().equals(Assign.BOARD.name()) &&
+                !request.getAssign().equals(Assign.MANAGER.name()) &&
+                !request.getAssign().equals(Assign.READ_ONLY.name())
         ) {
             throw new CustomException(ErrorCode.ROLE_NOT_FOUND, "존재하지 않는 권한입니다.");
         }
 
+//        if (!wsmember.getAssign().equals(Assign.MANAGER)) {
+//            throw new CustomException(ErrorCode.ROLE_ERROR, "워크스페이스 멤버만 접근할 수 있습니다.");
+//        }
 
-        Member updatedMember = memberRepository.save(new Member(member, workspace));
-        return new MemberSaveResponse(updatedMember);
+        Assign newAssign = Assign.valueOf(request.getAssign());
+        if (member.getAssign() != Assign.MANAGER) {
+            member.changeAssign(newAssign);
+            memberRepository.save(member);
+        }
+
+        return new MemberSaveResponse(member);
     }
 }

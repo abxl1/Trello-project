@@ -1,5 +1,6 @@
 package com.sparta.trelloproject.domain.member.entity;
 
+import com.sparta.trelloproject.domain.member.dto.request.MemberRequest;
 import com.sparta.trelloproject.domain.member.enums.Assign;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
@@ -37,5 +38,9 @@ public class Member {
     public Member(Member member, Workspace workspace) {
         this.assign = member.assign;
         this.workspace = workspace;
+    }
+
+    public void changeAssign(Assign newAssign) {
+        this.assign = newAssign;
     }
 }
