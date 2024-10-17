@@ -2,10 +2,10 @@ package com.sparta.trelloproject.domain.board.service;
 
 import com.sparta.trelloproject.common.exception.CustomException;
 import com.sparta.trelloproject.common.exception.ErrorCode;
+import com.sparta.trelloproject.domain.board.dto.request.BoardRequest;
+import com.sparta.trelloproject.domain.board.dto.response.BoardResponse;
 import com.sparta.trelloproject.domain.board.entity.Board;
 import com.sparta.trelloproject.domain.board.repository.BoardRepository;
-import com.sparta.trelloproject.domain.board.request.BoardRequest;
-import com.sparta.trelloproject.domain.board.response.BoardResponse;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;
@@ -102,7 +102,7 @@ public class BoardService {
 
     // 보드 삭제 (연관된 리스트와 카드 삭제)
     @Transactional
-    public void deleteBoard(Long boardId, Long userId) {
+    public BoardResponse.BoardDeleteResponse deleteBoard(Long boardId, Long userId) {
         Board board = getBoardById(boardId);
 
         if(!board.getUserId().equals(userId)) {
@@ -113,5 +113,7 @@ public class BoardService {
         validateUserRole(user);
 
         boardRepository.delete(board); // 연관된 리스트와 카드도 자동 삭제됨
+
+        return new BoardResponse.BoardDeleteResponse(boardId);
     }
 }
