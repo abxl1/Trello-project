@@ -41,4 +41,8 @@ public class Member {
     public void changeAssign(Assign newAssign) {
         this.assign = newAssign;
     }
+
+    public void startAssign() {
+        this.assign = Assign.MANAGER;
+    }
 }
