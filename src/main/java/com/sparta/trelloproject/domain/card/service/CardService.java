@@ -49,7 +49,7 @@ public class CardService {
 
     }
 
-//    @CreateActivity
+    @CreateActivity
     @Transactional
     public CardSaveResponse updateCard(AuthUser authUser, Long listId, Long cardId, CardUpdateRequest request) {
 

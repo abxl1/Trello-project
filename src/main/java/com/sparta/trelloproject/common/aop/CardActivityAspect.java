@@ -15,6 +15,8 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -32,7 +34,8 @@ public class CardActivityAspect {
 
     @After("@annotation(CreateActivity)")
     public void createCardActivity(JoinPoint joinPoint) {
-        AuthUser authUser = (AuthUser) request.getAttribute("authUser");
+
+        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // Null 체크
         if (authUser == null) {
@@ -41,23 +44,21 @@ public class CardActivityAspect {
         }
 
         String userId = String.valueOf(authUser.getUserId());
-        String requestUrl = request.getRequestURI();
         String activity = "유저ID " + userId + "이 ";
+        String method = request.getMethod();
 
-        if(requestUrl.contains("create")){
+        if(method != null && method.equals("POST")){
             activity += "카드를 생성했습니다.";
             Card card = cardRepository.findTopByOrderByIdDesc();
             cardActivityService.createActivity(activity, card);
         }
 
-        if (requestUrl.contains("update")){
+        if (method != null && method.equals("PATCH")){
             activity += "카드를 수정했습니다.";
-            Long cardId = (long) joinPoint.getArgs()[3];
+            Long cardId = (long) joinPoint.getArgs()[2];
             Card card = cardRepository.findById(cardId).orElseThrow();
             cardActivityService.createActivity(activity, card);
         }
-
-
 
     }
 }
