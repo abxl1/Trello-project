@@ -13,6 +13,8 @@ import com.sparta.trelloproject.domain.card.entity.Card;
 import com.sparta.trelloproject.domain.card.repository.CardRepository;
 import com.sparta.trelloproject.domain.list.entity.TaskList;
 import com.sparta.trelloproject.domain.list.repository.TaskListRepository;
+import com.sparta.trelloproject.domain.member.entity.Member;
+import com.sparta.trelloproject.domain.member.repository.MemberRepository;
 import com.sparta.trelloproject.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,7 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final TaskListRepository taskListRepository;
-    private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
     @CreateActivity
     @Transactional
@@ -35,30 +37,31 @@ public class CardService {
 
         User user = User.fromAuthUser(authUser);
 
-        TaskList taskList = taskListRepository.findById(listId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+//        Member member = findMember(user);
+
+        TaskList taskList = findTaskList(listId);
 
         Long cardIndex = (long) taskList.getCards().size() + 1;
 
-        Card saveCard = cardRepository.save(new Card(request, cardIndex));
+        Card saveCard = cardRepository.save(new Card(request, cardIndex, taskList));
 
         return new CardSaveResponse(saveCard);
 
     }
 
-    @CreateActivity
+//    @CreateActivity
     @Transactional
     public CardSaveResponse updateCard(AuthUser authUser, Long listId, Long cardId, CardUpdateRequest request) {
 
         User user = User.fromAuthUser(authUser);
 
-        TaskList taskList = taskListRepository.findById(listId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+//        Member member = findMember(user);
+
+        TaskList taskList = findTaskList(listId);
 
         Long totalCardIndex = (long) taskList.getCards().size();
 
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CARD_NOT_FOUND));
+        Card card = findCard(cardId);
 
         card.updateCard(request);
 
@@ -79,10 +82,31 @@ public class CardService {
     @Transactional
     public void deleteCard(AuthUser authUser, Long boardId, Long listId, Long cardId) {
 
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CARD_NOT_FOUND));
+        User user = User.fromAuthUser(authUser);
+
+//        Member member = findMember(user);
+
+        Card card = findCard(cardId);
 
         cardRepository.delete(card);
+    }
+
+    // TaskList 조회
+    public TaskList findTaskList(Long listId){
+        return taskListRepository.findById(listId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+    }
+
+    // Card 조회
+    public Card findCard(Long cardId){
+        return cardRepository.findById(cardId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CARD_NOT_FOUND));
+    }
+
+    // 맴버 조회(읽기 전용일 시 예외)
+    public Member findMember(User user){
+        return memberRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.ROLE_ERROR, "읽기 전용 맴버로 카드 생성, 수정이 불가능합니다."));
     }
 }
 

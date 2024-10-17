@@ -51,11 +51,12 @@ public class Card {
     @OneToMany(mappedBy = "card")
     private List<Comment> comments = new ArrayList<>();
 
-    public Card(CardSaveRequest request, Long cardIndex) {
+    public Card(CardSaveRequest request, Long cardIndex, TaskList taskList) {
         this.title = request.getTitle();
         this.description = request.getDescription();
         this.deadline = request.getDeadline();
         this.index = cardIndex;
+        this.taskList = taskList;
     }
 
     public void updateCard(CardUpdateRequest request) {
