@@ -11,6 +11,7 @@ import com.sparta.trelloproject.domain.comment.repository.CommentRepository;
 import com.sparta.trelloproject.domain.card.entity.Card;
 import com.sparta.trelloproject.domain.card.repository.CardRepository;
 import com.sparta.trelloproject.domain.comment.service.CommentService;
+import com.sparta.trelloproject.domain.list.entity.TaskList;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
 import com.sparta.trelloproject.domain.notification.service.NotificationService;
@@ -63,7 +64,7 @@ class CommentServiceTest {
         // Given
         Long cardId = 1L;
         AuthUser authUser = new AuthUser(1L, "email", UserRole.ROLE_USER);
-        CommentRequest commentRequest = new CommentRequest("This is a comment", "👍");
+        CommentRequest commentRequest = new CommentRequest("This is a comment 👍");
 
         // User 객체 생성 (생성자 사용)
         User user = new User("email@asdfds.com", "password", UserRole.ROLE_USER);
@@ -72,7 +73,7 @@ class CommentServiceTest {
         CardSaveRequest cardSaveRequest = new CardSaveRequest("Card Title", "Card Description", null);
 
         // Card 객체 생성 (CardSaveRequest 사용)
-        Card card = new Card(cardSaveRequest, 1L);
+        Card card = new Card(cardSaveRequest, 1L,new TaskList());
 
         // Member 객체 생성 (생성자 사용)
         Member member = new Member(user, new Workspace());
@@ -87,7 +88,7 @@ class CommentServiceTest {
         when(memberRepository.findByUserId(authUser.getUserId())).thenReturn(Optional.of(member));
 
         // CommentRepository mock 설정
-        when(commentRepository.save(any(Comment.class))).thenReturn(new Comment(user, "This is a comment", "👍", card));
+        when(commentRepository.save(any(Comment.class))).thenReturn(new Comment(user, "This is a comment 👍", card));
 
         // When
         CommentResponse response = commentService.saveComment(authUser, cardId, commentRequest);
@@ -95,7 +96,6 @@ class CommentServiceTest {
         // Then
         assertNotNull(response);
         assertEquals(commentRequest.getText(), response.getText());
-        assertEquals(commentRequest.getEmoji(), response.getEmoji());
         verify(commentRepository, times(1)).save(any(Comment.class));
         verify(notificationService, times(1)).sendSlackNotification(anyString(), anyString(), anyString());
         verify(notificationService, times(1)).sendDiscordNotification(anyString(), anyString(), anyString());
@@ -106,10 +106,10 @@ class CommentServiceTest {
         // Given
         Long commentId = 1L;
         AuthUser authUser = new AuthUser(1L, "email", UserRole.ROLE_USER);
-        CommentRequest commentRequest = new CommentRequest("Updated comment", "😃");
+        CommentRequest commentRequest = new CommentRequest("Updated comment😃");
 
         User user = new User("email@asdfds.com", "asdf",UserRole.ROLE_USER);
-        Comment existingComment = new Comment(user, "Old comment", "😊", new Card());
+        Comment existingComment = new Comment(user, "Updated comment😃", new Card());
         existingComment.setCommentId(commentId);
 
         when(userRepository.findById(authUser.getUserId())).thenReturn(Optional.of(user));
@@ -120,8 +120,7 @@ class CommentServiceTest {
 
         // Then
         assertNotNull(response);
-        assertEquals("Updated comment", response.getText());
-        assertEquals("😃", response.getEmoji());
+        assertEquals("Updated comment😃", response.getText());
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
@@ -132,7 +131,7 @@ class CommentServiceTest {
         AuthUser authUser = new AuthUser(1L, "email", UserRole.ROLE_USER);
 
         User user = new User("email@asdfds.com", "asdf",UserRole.ROLE_USER);
-        Comment comment = new Comment(user, "This is a comment", "👍", new Card());
+        Comment comment = new Comment(user, "This is a comment👍", new Card());
         comment.setCommentId(commentId);
 
         when(userRepository.findById(authUser.getUserId())).thenReturn(Optional.of(user));
@@ -150,7 +149,7 @@ class CommentServiceTest {
         // Given
         Long cardId = 1L;
         AuthUser authUser = new AuthUser(1L, "email", UserRole.ROLE_USER);
-        CommentRequest commentRequest = new CommentRequest("This is a comment", "👍");
+        CommentRequest commentRequest = new CommentRequest("This is a comment👍");
 
         User user = new User("email@asdfds.com", "asdf", UserRole.ROLE_USER);
         Card card = new Card();
