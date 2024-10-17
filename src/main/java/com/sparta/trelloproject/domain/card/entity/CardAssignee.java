@@ -1,6 +1,5 @@
 package com.sparta.trelloproject.domain.card.entity;
 
-import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;

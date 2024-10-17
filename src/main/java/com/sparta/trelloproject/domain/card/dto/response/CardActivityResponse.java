@@ -1,6 +1,5 @@
 package com.sparta.trelloproject.domain.card.dto.response;
 
-import com.sparta.trelloproject.domain.card.entity.CardActivity;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

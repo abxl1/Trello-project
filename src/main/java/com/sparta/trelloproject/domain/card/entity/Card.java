@@ -51,6 +51,7 @@ public class Card {
     @BatchSize(size = 10)
     private Set<Comment> comments = new HashSet<>();
 
+
     public Card(CardSaveRequest request, Long cardIndex, TaskList taskList) {
         this.title = request.getTitle();
         this.description = request.getDescription();
@@ -59,7 +60,9 @@ public class Card {
         this.taskList = taskList;
     }
 
+
     public void updateCard(CardUpdateRequest request) {
+
         if (request.getTitle() != null){
             this.title = request.getTitle();
         }
@@ -71,7 +74,9 @@ public class Card {
         if(request.getDeadline() != null){
             this.deadline = request.getDeadline();
         }
+
     }
+
 
     public void changeCardIndex(TaskList taskList, Card card, Long listId, Long index, Long totalCardIndex) {
 
@@ -85,7 +90,6 @@ public class Card {
             for (int i = 0; i < index; i++) {
                 sortedCards.get(i).dcreaseIndex();
             }
-
         } else {
             for (int i = (int) (index + 1); i < cards.size(); i++) {
                 sortedCards.get(i).increaseIndex();
@@ -93,6 +97,7 @@ public class Card {
         }
 
         card.changeIndex(index);
+
     }
 
     public void dcreaseIndex() {
@@ -106,4 +111,5 @@ public class Card {
     public void changeIndex(Long index){
         this.index = index;
     }
+
 }

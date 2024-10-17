@@ -1,6 +1,5 @@
 package com.sparta.trelloproject.domain.card.dto.response;
 
-import com.sparta.trelloproject.domain.card.entity.Card;
 import com.sparta.trelloproject.domain.comment.dto.response.CommentResponse;
 import lombok.Getter;
 
