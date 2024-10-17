@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("boards/{boardId}/lists/{listId}")
+@RequestMapping("/boards/{boardId}/lists/{listId}")
 public class CardController {
 
     private final CardService cardService;
@@ -21,8 +21,8 @@ public class CardController {
     @PostMapping("/cards")
     public ResponseEntity<CardSaveResponse> createCard(
             @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable Long boardId,
-            @PathVariable Long listId,
+            @PathVariable("boardId") Long boardId,
+            @PathVariable("listId") Long listId,
             @RequestBody CardSaveRequest request) {
 
         CardSaveResponse response = cardService.createCard(authUser, boardId, listId, request);
