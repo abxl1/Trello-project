@@ -20,13 +20,17 @@ public class GlobalExceptionHandler {
         return getErrorResponse(ex.getErrorCode().getStatus(), ex.getMessage());
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleException(Exception ex) {
+        return getErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+    }
+
     /**
      * 에러 객체를 반환하는 메서드
      * @param status 오류 상태
      * @param message 오류 메시지
      * @return 해당 내용이 담긴 에러 객체
      */
-    @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> getErrorResponse(HttpStatus status, String message) {
         Map<String, Object> errorResponse = new HashMap<>();
         errorResponse.put("status", status.name());
