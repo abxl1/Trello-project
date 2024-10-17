@@ -11,108 +11,100 @@ import com.sparta.trelloproject.domain.list.dto.response.TaskListResponse;
 import com.sparta.trelloproject.domain.list.dto.response.TaskListSaveResponse;
 import com.sparta.trelloproject.domain.list.entity.TaskList;
 import com.sparta.trelloproject.domain.list.repository.TaskListRepository;
+import com.sparta.trelloproject.domain.notification.service.NotificationService;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
-import com.sparta.trelloproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.sparta.trelloproject.domain.user.entity.User.fromAuthUser;
+
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TaskListService {
 
     private final TaskListRepository taskListRepository;
-    private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final NotificationService notificationService;
 
-    // 유저 찾기
-    private User getUser(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
-    // 보드 찾기
     private Board getBoard(Long boardId) {
         return boardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
     }
 
-    // 유저 권한 검증
-    private void validateUserRole(User user) {
-        if(user.getUserRole() == UserRole.ROLE_USER) {
-            throw new CustomException(ErrorCode.ROLE_ERROR);
+    // 조회 루틴
+    private void validateList(AuthUser authUser) {
+        User user = fromAuthUser(authUser);
+
+        if (user.getUserRole() == UserRole.ROLE_USER) {
+            throw new CustomException(ErrorCode.ROLE_ERROR, "일반 유저는 접근할 수 없습니다.");
         }
     }
 
+    /**
+     * 리스트 조회
+     *
+     * @param authUser 인증된 사용자
+     * @param boardId  생성할 리스트의 대상 보드
+     * @return HTTPStatus.created
+     */
     @Transactional
     public TaskListSaveResponse saveList(
             AuthUser authUser,
             TaskListSaveRequest request,
             Long boardId
     ) {
-        User user = getUser(authUser.getUserId());
-        validateUserRole(user); // 유저 권한 검증
-
-        Board board = getBoard(boardId); // 보드 확인
+        validateList(authUser);
+        Board board = getBoard(boardId);
 
         Long index = taskListRepository.countByBoardId(boardId);
 
-        // TaskList 생성 후 저장
-        TaskList taskList = new TaskList(request, board, index); // 수정된 생성자 사용
+        TaskList taskList = new TaskList(request, board, index);
         TaskList savedTaskList = taskListRepository.save(taskList);
+
+        // 리스트 생성 알림 전송
+        notificationService.sendListCreationNotification(user.getEmail(), boardId.toString(), savedTaskList.getId().toString(), savedTaskList.getTitle());
 
         return new TaskListSaveResponse(savedTaskList);
     }
 
-
-
-//    @Transactional
-//    public TaskListSaveResponse saveList(
-//            AuthUser authUser,
-//            TaskListSaveRequest request,
-//            Long boardId
-//    ) {
-//
-//        User user = userRepository.findByEmail(authUser.getEmail()).orElseThrow(
-//                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "사용자를 찾을 수 없습니다.")
-//        );
-//
-//        if (authUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER"))) {
-//            throw new CustomException(ErrorCode.ROLE_ERROR, "읽기 전용 유저는 리스트를 생성할 수 없습니다.");
-//        }
-//
-//        TaskList saveTaskList = taskListRepository.save(new TaskList(request));
-//        return new TaskListSaveResponse(saveTaskList);
-//    }
-
-//    @Transactional(readOnly = true)
-//    public TaskListResponse getList(
-//            AuthUser authUser,
-//            Long boardId,
-//            Long listId
-//    ) {
-//        User user = getUser(authUser.getUserId());
-//        validateUserRole(user); // 유저 권한 검증
-//
-//        Board board = getBoard(boardId); // 보드 확인
-//        TaskList list = taskListRepository.findById(listId);
-//
-//        return null;
-//    }
-
-    @Transactional(readOnly = true)
-    public Page<TaskListResponse> getLists(
+    /**
+     * 리스트 조회
+     *
+     * @param authUser 인증된 사용자
+     * @param boardId  조회할 리스트의 대상 보드
+     * @param listId   조회할 리스트의 아이디
+     * @return HTTPStatus.ok
+     */
+    public TaskListResponse getList(
             AuthUser authUser,
-            int page,
-            int size,
-            Long boardId
+            Long boardId,
+            Long listId
     ) {
+        validateList(authUser);
+        Board board = getBoard(boardId);
 
-        return null;
+        TaskList list = taskListRepository.findById(listId).orElseThrow(
+                () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
+
+        return new TaskListResponse(
+                list.getId(),
+                list.getTitle(),
+                list.getIndex()
+        );
     }
 
+    /**
+     * 리스트 변경
+     *
+     * @param authUser 인증된 사용자
+     * @param request  title, index
+     * @param boardId  변경할 리스트의 대상 보드
+     * @param listId   변경할 리스트의 아이디
+     * @return HTTPStatus.ok
+     */
     @Transactional
     public TaskListResponse updateList(
             AuthUser authUser,
@@ -120,15 +112,43 @@ public class TaskListService {
             Long boardId,
             Long listId
     ) {
+
+        validateList(authUser);
+        Board board = getBoard(boardId);
+
+        Long totalListIndex = (long) board.getLists().size();
+
+        TaskList list = taskListRepository.findById(listId).orElseThrow(
+                () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
+
+        list.updateList(request);
+
+        if (request.getIndex() != null) {
+            list.changeListIndex(board, list, boardId, request.getIndex(), totalListIndex);
+        }
+
         return null;
     }
 
+    /**
+     * 리스트 변경
+     *
+     * @param authUser 인증된 사용자
+     * @param boardId  삭제할 리스트의 대상 보드
+     * @param listId   삭제할 리스트의 아이디
+     */
     @Transactional
     public void deleteList(
             AuthUser authUser,
             Long boardId,
             Long listId
     ) {
+        validateList(authUser);
+        Board board = getBoard(boardId);
 
+        TaskList list = taskListRepository.findById(listId).orElseThrow(
+                () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
+
+        taskListRepository.delete(list);
     }
 }

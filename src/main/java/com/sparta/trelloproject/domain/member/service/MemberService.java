@@ -5,6 +5,7 @@ import com.sparta.trelloproject.common.exception.ErrorCode;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.member.dto.request.MemberRequest;
 import com.sparta.trelloproject.domain.member.dto.request.MemberSaveRequest;
+import com.sparta.trelloproject.domain.member.dto.response.MemberResponse;
 import com.sparta.trelloproject.domain.member.dto.response.MemberSaveResponse;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.enums.Assign;
@@ -14,19 +15,25 @@ import com.sparta.trelloproject.domain.user.repository.UserRepository;
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final UserRepository userRepository;
     private final WorkspaceRepository workspaceRepository;
 
+    /**
+     * 멤버 추가하기
+     * @param authUser 인증된 사용자
+     * @param request email
+     * @param workspaceId 추가할 멤버의 대상 워크스페이스
+     * @return HTTPStatus.created
+     */
     @Transactional
     public MemberSaveResponse saveMember(
             AuthUser authUser,
@@ -56,8 +63,16 @@ public class MemberService {
         return new MemberSaveResponse(member);
     }
 
+    /**
+     * 멤버 역할 변경하기
+     * @param authUser 인증된 사용자
+     * @param request email, assign
+     * @param workspaceId 변경할 멤버의 대상 워크스페이스
+     * @param memberId 변결할 멤버의 아이디
+     * @return HTTPStatus.ok
+     */
     @Transactional
-    public MemberSaveResponse updateMember(
+    public MemberResponse updateMember(
             AuthUser authUser,
             MemberRequest request,
             Long workspaceId,
@@ -65,10 +80,6 @@ public class MemberService {
     ) {
 
         User user = User.fromAuthUser(authUser);
-
-//        Member wsmember = memberRepository.findByUserId(authUser.getUserId()).orElseThrow(
-//                () -> new CustomException(ErrorCode.USER_NOT_FOUND, "요청한 사용자를 찾을 수 없습니다.")
-//        );
 
         Member member = memberRepository.findByUserId(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND, "변경할 사용자를 찾을 수 없습니다.")
@@ -78,6 +89,10 @@ public class MemberService {
                 () -> new CustomException(ErrorCode.WORKSPACE_NOT_FOUND)
         );
 
+        if (member.getAssign().name().equals(request.getAssign())) {
+            throw new CustomException(ErrorCode.SAME_ROLE_REQUEST, "같은 권한으로 변경할 수 없습니다.");
+        }
+
         if (!request.getAssign().equals(Assign.BOARD.name()) &&
                 !request.getAssign().equals(Assign.MANAGER.name()) &&
                 !request.getAssign().equals(Assign.READ_ONLY.name())
@@ -85,16 +100,12 @@ public class MemberService {
             throw new CustomException(ErrorCode.ROLE_NOT_FOUND, "존재하지 않는 권한입니다.");
         }
 
-//        if (!wsmember.getAssign().equals(Assign.MANAGER)) {
-//            throw new CustomException(ErrorCode.ROLE_ERROR, "워크스페이스 멤버만 접근할 수 있습니다.");
-//        }
-
         Assign newAssign = Assign.valueOf(request.getAssign());
         if (member.getAssign() != Assign.MANAGER) {
             member.changeAssign(newAssign);
             memberRepository.save(member);
         }
 
-        return new MemberSaveResponse(member);
+        return new MemberResponse(member);
     }
 }
