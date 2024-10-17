@@ -5,9 +5,13 @@ import lombok.Getter;
 @Getter
 public class TaskListResponse {
 
-    private final String message;
+    private final Long taskListId;
+    private final String taskListTitle;
+    private final Long taskListIndex;
 
-    public TaskListResponse(String message) {
-        this.message = message;
+    public TaskListResponse(Long listId, String listTitle, Long taskListIndex) {
+        this.taskListTitle = listTitle;
+        this.taskListId = listId;
+        this.taskListIndex = taskListIndex;
     }
 }
