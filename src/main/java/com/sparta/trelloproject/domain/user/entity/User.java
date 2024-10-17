@@ -3,6 +3,7 @@ package com.sparta.trelloproject.domain.user.entity;
 import com.sparta.trelloproject.common.entity.Timestamped;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.card.entity.CardAssignee;
+import com.sparta.trelloproject.domain.comment.entity.Comment;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
 import jakarta.persistence.*;
@@ -40,6 +41,9 @@ public class User extends Timestamped {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CardAssignee> cardAssignees = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public User(String email, String password, UserRole userRole) {
         this.email = email;

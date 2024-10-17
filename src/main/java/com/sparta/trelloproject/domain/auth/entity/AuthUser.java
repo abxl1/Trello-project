@@ -1,7 +1,7 @@
 package com.sparta.trelloproject.domain.auth.entity;
 
 import com.sparta.trelloproject.domain.user.enums.UserRole;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

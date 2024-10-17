@@ -17,6 +17,7 @@ import com.sparta.trelloproject.domain.list.entity.TaskList;
 import com.sparta.trelloproject.domain.list.repository.TaskListRepository;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
+import com.sparta.trelloproject.domain.notification.service.NotificationService;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class CardService {
     private final CardRepository cardRepository;
     private final TaskListRepository taskListRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
     private final CardAssigneeRepository cardAssigneeRepository;
     private final UserRepository userRepository;
 
@@ -56,6 +58,9 @@ public class CardService {
         }
 
         cardRepository.save(card);
+
+        // 카드 생성 알림을 NotificationService에서 처리
+        notificationService.sendCardCreationNotification(user.getEmail(), boardId, listId, card.getId());
 
         return new CardSaveResponse(card);
 
@@ -138,6 +143,5 @@ public class CardService {
         return memberRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ROLE_ERROR, "읽기 전용 맴버로 카드 생성, 수정이 불가능합니다."));
     }
-
 }
 
