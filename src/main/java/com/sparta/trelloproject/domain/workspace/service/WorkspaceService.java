@@ -6,14 +6,14 @@ import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.enums.Assign;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
+import com.sparta.trelloproject.domain.user.dto.request.UserCreateRequest;
+import com.sparta.trelloproject.domain.user.dto.request.UserGetRequest;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;
-import com.sparta.trelloproject.domain.user.request.UserGetRequest;
 import com.sparta.trelloproject.domain.user.request.UserUpdateRequest;
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import com.sparta.trelloproject.domain.workspace.repository.WorkspaceRepository;
-import com.sparta.trelloproject.domain.user.request.UserCreateRequest;
-import com.sparta.trelloproject.domain.workspace.response.WorkspaceResponse;
+import com.sparta.trelloproject.domain.workspace.dto.response.WorkspaceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,14 +36,14 @@ public class WorkspaceService {
 
     // 유저가 조회하고자 하는 ID 워크스페이스 조회
     Workspace workspace = null;
-    for(Member member : members) {
+    for (Member member : members) {
       workspace = findWorkspaceByMember(member);
-      if(workspace.getId().equals(userGetRequest.getWorkspaceId())) {
+      if (workspace.getId().equals(userGetRequest.getWorkspaceId())) {
         workspace = member.getWorkspace();
         break;
       }
     }
-    if(workspace == null) {
+    if (workspace == null) {
       throw new CustomException(ErrorCode.WORKSPACE_NOT_FOUND);
     }
 
@@ -58,7 +58,7 @@ public class WorkspaceService {
     User user = findUserById(authUser);
 
     // ADMIN 권한이 아니라면 예외발생
-    if(!user.getUserRole().toString().equals("ROLE_ADMIN")){
+    if (!user.getUserRole().toString().equals("ROLE_ADMIN")) {
       throw new CustomException(ErrorCode.PERMISSION_ERROR);
     }
 
@@ -85,7 +85,7 @@ public class WorkspaceService {
     User user = findUserById(authUser);
 
     // ADMIN 권한이 아니라면 예외발생
-    if(!user.getUserRole().toString().equals("ROLE_ADMIN")){
+    if (!user.getUserRole().toString().equals("ROLE_ADMIN")) {
       throw new CustomException(ErrorCode.PERMISSION_ERROR);
     }
 
@@ -94,14 +94,14 @@ public class WorkspaceService {
 
     // 유저가 조회하고자 하는 ID 워크스페이스 조회
     Workspace workspace = null;
-    for(Member member : members) {
+    for (Member member : members) {
       workspace = findWorkspaceByMember(member);
-      if(workspace.getId().equals(userUpdateRequest.getWorkspaceId())) {
+      if (workspace.getId().equals(userUpdateRequest.getWorkspaceId())) {
         workspace = member.getWorkspace();
         break;
       }
     }
-    if(workspace == null) {
+    if (workspace == null) {
       throw new CustomException(ErrorCode.WORKSPACE_NOT_FOUND);
     }
 
@@ -118,7 +118,7 @@ public class WorkspaceService {
         () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
     // MANAGER 권한이 아니라면 예외발생
-    if(!member.getAssign().equals(Assign.MANAGER)){
+    if (!member.getAssign().equals(Assign.MANAGER)) {
       throw new CustomException(ErrorCode.PERMISSION_ERROR);
     }
 
@@ -137,7 +137,7 @@ public class WorkspaceService {
   private List<Member> findMemberByUserId(AuthUser authUser) {
     List<Member> members = memberRepository.findAllByUserId(authUser.getUserId());
 
-    if(members.isEmpty()){
+    if (members.isEmpty()) {
       throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
     }
     return members;
@@ -147,7 +147,7 @@ public class WorkspaceService {
 
     List<Workspace> workspaces = workspaceRepository.findAllByMember(member);
 
-    if(workspaces.isEmpty()) {
+    if (workspaces.isEmpty()) {
       String errorMessage = ErrorCode.WORKSPACE_NOT_FOUND.customMessage("멤버 ID = " + member.getId());
       throw new CustomException(ErrorCode.WORKSPACE_NOT_FOUND, errorMessage);
     }

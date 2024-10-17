@@ -1,4 +1,4 @@
-package com.sparta.trelloproject.domain.workspace.response;
+package com.sparta.trelloproject.domain.workspace.dto.response;
 
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import lombok.Getter;

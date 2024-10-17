@@ -1,7 +1,7 @@
 package com.sparta.trelloproject.domain.list.entity;
 
 import com.sparta.trelloproject.domain.board.entity.Board;
-import com.sparta.trelloproject.domain.list.dto.TaskListSaveRequest;
+import com.sparta.trelloproject.domain.list.dto.request.TaskListSaveRequest;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.card.entity.Card;
 import jakarta.persistence.*;
@@ -34,6 +34,10 @@ public class TaskList {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public TaskList(TaskListSaveRequest request) {
+        this.title = request.getTitle();
+    }
+
     @OneToMany(mappedBy = "taskList", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Card> cards = new ArrayList<>();
 
@@ -41,9 +45,5 @@ public class TaskList {
         this.title = request.getTitle();
         this.board = board; // 새로운 보드 객체 생성
         this.index = index;
-    }
-
-    public TaskList(String title) {
-        this.title = title;
     }
 }

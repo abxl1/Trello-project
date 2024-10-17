@@ -1,4 +1,4 @@
-package com.sparta.trelloproject.domain.list.dto;
+package com.sparta.trelloproject.domain.list.dto.response;
 
 import com.sparta.trelloproject.domain.list.entity.TaskList;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,6 @@
-package com.sparta.trelloproject.domain.user.dto;
+package com.sparta.trelloproject.domain.auth.dto.request;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserChangePasswordRequest {
+public class SigninRequest {
 
     @NotBlank
-    private String oldPassword;
+    @Email
+    private String email;
     @NotBlank
-    private String newPassword;
+    private String password;
 }

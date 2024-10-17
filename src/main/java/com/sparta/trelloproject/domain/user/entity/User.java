@@ -32,6 +32,8 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    private Boolean isDeleted = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> members = new ArrayList<>();
 
@@ -63,4 +65,7 @@ public class User extends Timestamped {
         this.userRole = userRole;
     }
 
+    public void toggleDelete() {
+        this.isDeleted = !this.isDeleted;
+    }
 }

@@ -1,8 +1,8 @@
 package com.sparta.trelloproject.domain.user.controller;
 
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
-import com.sparta.trelloproject.domain.user.dto.UserChangePasswordRequest;
-import com.sparta.trelloproject.domain.user.dto.UserResponse;
+import com.sparta.trelloproject.domain.user.dto.request.UserChangePasswordRequest;
+import com.sparta.trelloproject.domain.user.dto.response.UserResponse;
 import com.sparta.trelloproject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
