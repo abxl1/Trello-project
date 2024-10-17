@@ -11,6 +11,7 @@ import com.sparta.trelloproject.domain.list.dto.response.TaskListResponse;
 import com.sparta.trelloproject.domain.list.dto.response.TaskListSaveResponse;
 import com.sparta.trelloproject.domain.list.entity.TaskList;
 import com.sparta.trelloproject.domain.list.repository.TaskListRepository;
+import com.sparta.trelloproject.domain.notification.service.NotificationService;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.enums.UserRole;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;
@@ -26,6 +27,7 @@ public class TaskListService {
     private final TaskListRepository taskListRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final NotificationService notificationService;
 
     // 유저 찾기
     private User getUser(Long userId) {
@@ -62,6 +64,9 @@ public class TaskListService {
         // TaskList 생성 후 저장
         TaskList taskList = new TaskList(request, board, index); // 수정된 생성자 사용
         TaskList savedTaskList = taskListRepository.save(taskList);
+
+        // 리스트 생성 알림 전송
+        notificationService.sendListCreationNotification(user.getEmail(), boardId.toString(), savedTaskList.getId().toString(), savedTaskList.getTitle());
 
         return new TaskListSaveResponse(savedTaskList);
     }

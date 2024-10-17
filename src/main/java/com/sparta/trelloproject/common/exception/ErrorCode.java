@@ -80,6 +80,7 @@ public enum ErrorCode {
 
 
     // Alarm Errorcode
+    Notification_NOTIFICATION_FAILED(HttpStatus.BAD_REQUEST,"알림 전송에 실패했습니다."),
 
 
 

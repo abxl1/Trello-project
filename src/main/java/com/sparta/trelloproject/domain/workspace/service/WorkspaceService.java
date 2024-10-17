@@ -6,6 +6,7 @@ import com.sparta.trelloproject.domain.auth.entity.AuthUser;
 import com.sparta.trelloproject.domain.member.entity.Member;
 import com.sparta.trelloproject.domain.member.enums.Assign;
 import com.sparta.trelloproject.domain.member.repository.MemberRepository;
+import com.sparta.trelloproject.domain.notification.service.NotificationService;
 import com.sparta.trelloproject.domain.user.dto.request.UserCreateRequest;
 import com.sparta.trelloproject.domain.user.dto.request.UserGetRequest;
 import com.sparta.trelloproject.domain.user.entity.User;
@@ -28,6 +29,7 @@ public class WorkspaceService {
   private final WorkspaceRepository workspaceRepository;
   private final UserRepository userRepository;
   private final MemberRepository memberRepository;
+  private final NotificationService notificationService;
 
   // 워크스페이스 조회 로직
   public WorkspaceResponse getWorkspace(AuthUser authUser, UserGetRequest userGetRequest) {
@@ -64,6 +66,13 @@ public class WorkspaceService {
 
     // 워크스페이스 생성
     Workspace workspace = new Workspace(userCreateRequest.getTitle(), userCreateRequest.getExplaination(), user);
+    Workspace savedWorkspace = workspaceRepository.save(workspace);
+
+    // 워크스페이스 생성 후 ID 가져오기
+    String workspaceId = String.valueOf(savedWorkspace.getId());
+
+    // 워크스페이스 생성 알림 전송 (ID만 포함)
+    sendNotification(authUser.getEmail(), "워크스페이스", String.valueOf(workspace.getId()));
 
     // 워크스페이스 저장
     workspaceRepository.save(workspace);
@@ -75,6 +84,9 @@ public class WorkspaceService {
     // 멤버 권한을 workspace로
     member.startAssign();
     memberRepository.save(member);
+
+
+
 
     return new WorkspaceResponse(workspace);
   }
@@ -164,7 +176,14 @@ public class WorkspaceService {
     return memberRepository.findByUserIdAndWorkspaceId(authUser.getUserId(), workspaceId);
   }
 
-
+  // 알림 전송 메서드 수정
+  private void sendNotification(String email, String entityType, String entityId) {
+    try {
+      notificationService.sendWorkspaceCreationNotification(email, entityType, entityId);
+    } catch (Exception e) {
+      throw new CustomException(ErrorCode.Notification_NOTIFICATION_FAILED, "알림 전송에 실패했습니다.");
+    }
+  }
 }
 
 
