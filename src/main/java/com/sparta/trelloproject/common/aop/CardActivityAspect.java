@@ -39,8 +39,7 @@ public class CardActivityAspect {
 
         // Null 체크
         if (authUser == null) {
-            log.warn("AuthUser is null. Unable to log activity.");
-            return;
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         String userId = String.valueOf(authUser.getUserId());
