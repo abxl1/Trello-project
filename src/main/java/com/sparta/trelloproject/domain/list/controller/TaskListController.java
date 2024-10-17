@@ -51,19 +51,19 @@ public class TaskListController {
         return ResponseEntity.ok(taskListService.getLists(authUser, page, size, boardId));
     }
 
-    /**
-     * @param boardId 생성할 리스트의 대상 보드
-     * @param listId 조회할 리스트의 아이디
-     * @return HTTPStatus.ok
-     */
-    @GetMapping("/lists/{listsId}")
-    public ResponseEntity<TaskListResponse> getList(
-            @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable("boardId") Long boardId,
-            @PathVariable("boardId") Long listId
-    ) {
-        return ResponseEntity.ok(taskListService.getList(authUser, boardId, listId));
-    }
+//    /**
+//     * @param boardId 생성할 리스트의 대상 보드
+//     * @param listId 조회할 리스트의 아이디
+//     * @return HTTPStatus.ok
+//     */
+//    @GetMapping("/lists/{listsId}")
+//    public ResponseEntity<TaskListResponse> getList(
+//            @AuthenticationPrincipal AuthUser authUser,
+//            @PathVariable("boardId") Long boardId,
+//            @PathVariable("boardId") Long listId
+//    ) {
+//        return ResponseEntity.ok(taskListService.getList(authUser, boardId, listId));
+//    }
 
     /**
      * @param request 리스트 수정 시 필요한 데이터

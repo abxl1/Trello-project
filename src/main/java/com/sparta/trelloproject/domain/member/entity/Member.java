@@ -1,13 +1,11 @@
 package com.sparta.trelloproject.domain.member.entity;
 
-import com.sparta.trelloproject.domain.member.dto.request.MemberRequest;
 import com.sparta.trelloproject.domain.member.enums.Assign;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.workspace.entity.Workspace;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter

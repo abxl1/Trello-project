@@ -2,7 +2,6 @@ package com.sparta.trelloproject.domain.workspace.entity;
 
 import com.sparta.trelloproject.common.entity.Timestamped;
 import com.sparta.trelloproject.domain.member.entity.Member;
-import com.sparta.trelloproject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
