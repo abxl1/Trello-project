@@ -1,3 +1,4 @@
+
 package com.sparta.trelloproject.domain.card.service;
 
 import com.sparta.trelloproject.common.aop.CardActivityAspect;
@@ -138,7 +139,6 @@ class CardServiceTest {
         Card result1 = cardRepository.findById(1L).orElseThrow();
         Card result2 = cardRepository.findById(2L).orElseThrow();
         Card result3 = cardRepository.findById(3L).orElseThrow();
-
         // Then
         assertNotNull(response);
         assertEquals(3L, result1.getIndex());
