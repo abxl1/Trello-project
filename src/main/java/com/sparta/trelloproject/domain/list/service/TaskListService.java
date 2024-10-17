@@ -35,12 +35,13 @@ public class TaskListService {
     }
 
     // 조회 루틴
-    private void validateList(AuthUser authUser) {
+    private User validateList(AuthUser authUser) {
         User user = fromAuthUser(authUser);
 
         if (user.getUserRole() == UserRole.ROLE_USER) {
             throw new CustomException(ErrorCode.ROLE_ERROR, "일반 유저는 접근할 수 없습니다.");
         }
+        return user;
     }
 
     /**
@@ -56,7 +57,7 @@ public class TaskListService {
             TaskListSaveRequest request,
             Long boardId
     ) {
-        validateList(authUser);
+        User user = validateList(authUser);
         Board board = getBoard(boardId);
 
         Long index = taskListRepository.countByBoardId(boardId);

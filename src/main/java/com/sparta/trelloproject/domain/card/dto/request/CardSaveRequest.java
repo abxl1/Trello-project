@@ -19,4 +19,6 @@ public class CardSaveRequest {
 
     private LocalDateTime deadline;
 
+    private Long assignUser;
+
 }

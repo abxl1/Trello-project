@@ -9,14 +9,14 @@ import java.util.List;
 @Getter
 public class CardDetailResponse {
 
-    private String cardTitle;
-    private String cardDescription;
+    private String title;
+    private String description;
     private List<CardActivityResponse> activities;
     private List<CommentResponse> comments;
 
-    public CardDetailResponse(Card card, List<CardActivityResponse> activities, List<CommentResponse> comments){
-        this.cardTitle = card.getTitle();
-        this.cardDescription = card.getDescription();
+    public CardDetailResponse(String title, String description, List<CardActivityResponse> activities, List<CommentResponse> comments){
+        this.title = title;
+        this.description = description;
         this.activities = activities;
         this.comments = comments;
     }
