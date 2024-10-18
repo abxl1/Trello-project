@@ -75,10 +75,12 @@ public enum ErrorCode {
     Comment_AUTH_FORBIDDEN(HttpStatus.FORBIDDEN,"작성자가 아니므로 수정/삭제가 불가능합니다."),
     Comment_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 형식의 텍스트/이모지입니다."),
 
-    // File Errorcode
-
-
-
+    // UploadFile Errorcode
+    FILE_SIZE_EXCEEDED(HttpStatus.PAYLOAD_TOO_LARGE, "파일 크기는 5Mb를 넘을 수 없습니다."),
+    UNSUPPORTED_FILE_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "지원하지않는 파일 형식입니다."),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "업로드에 실패했습니다."),
+    FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일을 찾을 수 없습니다."),
+    FILE_NOT_FOUND_CARD(HttpStatus.NOT_FOUND, "카드에서 파일을 찾을 수 없습니다."),
 
     // Alarm Errorcode
     Notification_NOTIFICATION_FAILED(HttpStatus.BAD_REQUEST,"알림 전송에 실패했습니다."),
