@@ -9,6 +9,7 @@ import com.sparta.trelloproject.domain.card.dto.request.CardSaveRequest;
 import com.sparta.trelloproject.domain.card.dto.request.CardUpdateRequest;
 import com.sparta.trelloproject.domain.card.dto.response.CardDetailResponse;
 import com.sparta.trelloproject.domain.card.dto.response.CardSaveResponse;
+import com.sparta.trelloproject.domain.card.dto.response.CardSearchResponse;
 import com.sparta.trelloproject.domain.card.entity.Card;
 import com.sparta.trelloproject.domain.card.entity.CardAssignee;
 import com.sparta.trelloproject.domain.card.repository.CardAssigneeRepository;
@@ -21,9 +22,13 @@ import com.sparta.trelloproject.domain.notification.service.NotificationService;
 import com.sparta.trelloproject.domain.user.entity.User;
 import com.sparta.trelloproject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -92,12 +97,23 @@ public class CardService {
         }
 
         return new CardSaveResponse(card);
+
     }
 
 
     public CardDetailResponse searchCard(Long cardId) {
 
         return cardRepository.findByCardDetail(cardId);
+
+    }
+
+    public Page<CardSearchResponse> conditionSearchCard(int page, int size, String title, String description, LocalDateTime deadline, Long assignId) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<Card> cards = cardRepository.findByCondition(title, description, deadline, assignId, pageable);
+
+        return cards.map(this::createCardSearchResponse);
 
     }
 
@@ -111,7 +127,9 @@ public class CardService {
         Card card = findCard(cardId);
 
         cardRepository.delete(card);
+
     }
+
 
     // 카드 담당자 지정
     public void designate(Card card, User user){
@@ -143,5 +161,10 @@ public class CardService {
         return memberRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ROLE_ERROR, "읽기 전용 맴버로 카드 생성, 수정이 불가능합니다."));
     }
+
+    private CardSearchResponse createCardSearchResponse(Card card) {
+        return new CardSearchResponse(card);
+    }
+
 }
 

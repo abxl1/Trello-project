@@ -81,7 +81,7 @@ public class MemberService {
 
         User user = User.fromAuthUser(authUser);
 
-        Member member = memberRepository.findByUserId(memberId).orElseThrow(
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND, "변경할 사용자를 찾을 수 없습니다.")
         );
 
