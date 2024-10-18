@@ -1,4 +1,4 @@
-package com.sparta.trelloproject.domain.file.dto.request;
+package com.sparta.trelloproject.domain.uploadFile.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FileSaveRequest {
+public class UploadFileSaveRequest {
 
     private String fileName;
 }
