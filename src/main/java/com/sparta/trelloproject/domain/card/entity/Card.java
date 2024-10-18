@@ -5,6 +5,7 @@ import com.sparta.trelloproject.domain.card.dto.request.CardSaveRequest;
 import com.sparta.trelloproject.domain.card.dto.request.CardUpdateRequest;
 import com.sparta.trelloproject.domain.comment.entity.Comment;
 import com.sparta.trelloproject.domain.list.entity.TaskList;
+import com.sparta.trelloproject.domain.uploadFile.entity.UploadFile;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,9 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "card_id", nullable = false)
     private Long id;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UploadFile> uploadFiles = new ArrayList<>();
 
     @Column(name = "card_title", nullable = false)
     private String title;
