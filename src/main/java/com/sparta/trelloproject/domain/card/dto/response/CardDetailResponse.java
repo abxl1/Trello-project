@@ -1,7 +1,6 @@
 package com.sparta.trelloproject.domain.card.dto.response;
 
 import com.sparta.trelloproject.domain.comment.dto.response.CommentResponse;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
@@ -13,7 +12,7 @@ public class CardDetailResponse {
     private String description;
     private List<CardActivityResponse> activities;
     private List<CommentResponse> comments;
-    private Long viewCount;
+    private String viewCount;
 
     public CardDetailResponse(String title, String description, List<CardActivityResponse> activities, List<CommentResponse> comments){
         this.title = title;
@@ -22,7 +21,7 @@ public class CardDetailResponse {
         this.comments = comments;
     }
 
-    public CardDetailResponse(CardDetailResponse byCardDetail, Long viewCount) {
+    public CardDetailResponse(CardDetailResponse byCardDetail, String viewCount) {
         this.title = byCardDetail.getTitle();
         this.description = byCardDetail.getDescription();
         this.activities = byCardDetail.getActivities();

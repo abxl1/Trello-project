@@ -21,9 +21,9 @@ public class ViewCountService {
         redisTemplate.opsForValue().increment(key, 1);
     }
 
-    public Long getViewCount(Long cardId) {
+    public String getViewCount(Long cardId) {
         String key = "card:" + cardId + ":viewCount";
-        return (Long) redisTemplate.opsForValue().get(key);
+        return (String) redisTemplate.opsForValue().get(key);
     }
 
     public void resetViewCount(Long cardId) {

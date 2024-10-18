@@ -100,7 +100,7 @@ public class CardService {
 
     public CardDetailResponse searchCard(Long cardId) {
         viewCountService.incrementViewCount(cardId);
-        Long viewCount = viewCountService.getViewCount(cardId); // 조회수 가져오기
+        String viewCount = viewCountService.getViewCount(cardId); // 조회수 가져오기
         return new CardDetailResponse(cardRepository.findByCardDetail(cardId), viewCount);
     }
 
