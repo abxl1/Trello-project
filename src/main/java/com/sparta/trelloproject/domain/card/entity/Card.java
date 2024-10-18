@@ -58,6 +58,8 @@ public class Card {
     @BatchSize(size = 10)
     private Set<Comment> comments = new HashSet<>();
 
+    @Column(name = "view_count")
+    private Long viewCount = 0L; // 기본값 설정
 
     public Card(CardSaveRequest request, Long cardIndex, TaskList taskList) {
         this.title = request.getTitle();

@@ -4,7 +4,6 @@ import com.sparta.trelloproject.common.aop.CreateActivity;
 import com.sparta.trelloproject.common.exception.CustomException;
 import com.sparta.trelloproject.common.exception.ErrorCode;
 import com.sparta.trelloproject.domain.auth.entity.AuthUser;
-import com.sparta.trelloproject.domain.board.repository.BoardRepository;
 import com.sparta.trelloproject.domain.card.dto.request.CardSaveRequest;
 import com.sparta.trelloproject.domain.card.dto.request.CardUpdateRequest;
 import com.sparta.trelloproject.domain.card.dto.response.CardDetailResponse;
@@ -29,8 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +39,7 @@ public class CardService {
     private final NotificationService notificationService;
     private final CardAssigneeRepository cardAssigneeRepository;
     private final UserRepository userRepository;
+    private final ViewCountService viewCountService;
 
     @CreateActivity
     @Transactional
@@ -57,7 +55,7 @@ public class CardService {
 
         Card card = new Card(request, cardIndex, taskList);
 
-        if(request.getAssignUser() != null){
+        if (request.getAssignUser() != null) {
             User assignUser = findUser(request.getAssignUser());
             designate(card, assignUser);
         }
@@ -91,7 +89,7 @@ public class CardService {
             card.changeCardIndex(taskList, card, listId, request.getIndex(), totalCardIndex);
         }
 
-        if(request.getAssignUser() != null){
+        if (request.getAssignUser() != null) {
             User assignUser = findUser(request.getAssignUser());
             designate(card, assignUser);
         }
@@ -100,11 +98,10 @@ public class CardService {
 
     }
 
-
     public CardDetailResponse searchCard(Long cardId) {
-
-        return cardRepository.findByCardDetail(cardId);
-
+        viewCountService.incrementViewCount(cardId);
+        Long viewCount = viewCountService.getViewCount(cardId); // 조회수 가져오기
+        return new CardDetailResponse(cardRepository.findByCardDetail(cardId), viewCount);
     }
 
     public Page<CardSearchResponse> conditionSearchCard(int page, int size, String title, String description, LocalDateTime deadline, Long assignId) {
@@ -132,32 +129,32 @@ public class CardService {
 
 
     // 카드 담당자 지정
-    public void designate(Card card, User user){
+    public void designate(Card card, User user) {
         CardAssignee cardAssignee = new CardAssignee(card, user);
         cardAssigneeRepository.save(cardAssignee);
 
     }
 
     // User 조회
-    public User findUser(Long userId){
+    public User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     // TaskList 조회
-    public TaskList findTaskList(Long listId){
+    public TaskList findTaskList(Long listId) {
         return taskListRepository.findById(listId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
 
     // Card 조회
-    public Card findCard(Long cardId){
+    public Card findCard(Long cardId) {
         return cardRepository.findById(cardId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CARD_NOT_FOUND));
     }
 
     // 맴버 조회(읽기 전용일 시 예외)
-    public Member findMember(User user){
+    public Member findMember(User user) {
         return memberRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ROLE_ERROR, "읽기 전용 맴버로 카드 생성, 수정이 불가능합니다."));
     }
@@ -165,6 +162,4 @@ public class CardService {
     private CardSearchResponse createCardSearchResponse(Card card) {
         return new CardSearchResponse(card);
     }
-
 }
-
