@@ -16,7 +16,10 @@ import java.util.*;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "cards")
+@Table(name = "cards", indexes = {
+        @Index(name = "idx_card_title", columnList = "card_title"),
+        @Index(name = "idx_card_taskList_id", columnList = "taskList_id")
+})
 public class Card {
 
     @Id
@@ -63,15 +66,15 @@ public class Card {
 
     public void updateCard(CardUpdateRequest request) {
 
-        if (request.getTitle() != null){
+        if (request.getTitle() != null) {
             this.title = request.getTitle();
         }
 
-        if(request.getDescription() != null){
+        if (request.getDescription() != null) {
             this.description = request.getDescription();
         }
 
-        if(request.getDeadline() != null){
+        if (request.getDeadline() != null) {
             this.deadline = request.getDeadline();
         }
 
@@ -104,11 +107,11 @@ public class Card {
         this.index -= 1L;
     }
 
-    public void increaseIndex(){
+    public void increaseIndex() {
         this.index += 1L;
     }
 
-    public void changeIndex(Long index){
+    public void changeIndex(Long index) {
         this.index = index;
     }
 
