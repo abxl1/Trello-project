@@ -6,9 +6,9 @@ import com.sparta.trelloproject.domain.card.dto.request.CardUpdateRequest;
 import com.sparta.trelloproject.domain.card.dto.response.CardDetailResponse;
 import com.sparta.trelloproject.domain.card.dto.response.CardSaveResponse;
 import com.sparta.trelloproject.domain.card.dto.response.CardSearchResponse;
+import com.sparta.trelloproject.domain.card.dto.response.ViewCountSearchResponse;
 import com.sparta.trelloproject.domain.card.service.CardService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class CardController {
@@ -58,10 +57,14 @@ public class CardController {
             @PathVariable Long listId,
             @PathVariable Long cardId) {
 
-        log.info("카드 아이디 : " + cardId.toString());
         CardDetailResponse response = cardService.searchCard(cardId);
         return ResponseEntity.ok(response);
 
+    }
+
+    @GetMapping("/v1/cards/{cardId}")
+    public ResponseEntity<ViewCountSearchResponse> viewCountSearch(@PathVariable Long cardId) {
+        return ResponseEntity.ok(cardService.viewCountSearch(cardId));
     }
 
 

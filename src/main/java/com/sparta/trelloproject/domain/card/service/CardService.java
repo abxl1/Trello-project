@@ -9,6 +9,7 @@ import com.sparta.trelloproject.domain.card.dto.request.CardUpdateRequest;
 import com.sparta.trelloproject.domain.card.dto.response.CardDetailResponse;
 import com.sparta.trelloproject.domain.card.dto.response.CardSaveResponse;
 import com.sparta.trelloproject.domain.card.dto.response.CardSearchResponse;
+import com.sparta.trelloproject.domain.card.dto.response.ViewCountSearchResponse;
 import com.sparta.trelloproject.domain.card.entity.Card;
 import com.sparta.trelloproject.domain.card.entity.CardAssignee;
 import com.sparta.trelloproject.domain.card.repository.CardAssigneeRepository;
@@ -99,9 +100,12 @@ public class CardService {
     }
 
     public CardDetailResponse searchCard(Long cardId) {
+        return cardRepository.findByCardDetail(cardId);
+    }
+
+    public ViewCountSearchResponse viewCountSearch(Long cardId) {
         viewCountService.incrementViewCount(cardId);
-        String viewCount = viewCountService.getViewCount(cardId); // 조회수 가져오기
-        return new CardDetailResponse(cardRepository.findByCardDetail(cardId), viewCount);
+        return new ViewCountSearchResponse(viewCountService.getViewCount(cardId));
     }
 
     public Page<CardSearchResponse> conditionSearchCard(int page, int size, String title, String description, LocalDateTime deadline, Long assignId) {
