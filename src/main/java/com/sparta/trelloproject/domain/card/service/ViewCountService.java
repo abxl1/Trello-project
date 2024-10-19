@@ -13,22 +13,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ViewCountService {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private final CardRepository cardRepository;
+
+    public String getViewCount(Long cardId) {
+        String key = "card:" + cardId + ":viewCount";
+        return redisTemplate.opsForValue().get(key);
+    }
 
     public void incrementViewCount(Long cardId) {
         String key = "card:" + cardId + ":viewCount";
-        redisTemplate.opsForValue().increment(key, 1);
-    }
-
-    public Long getViewCount(Long cardId) {
-        String key = "card:" + cardId + ":viewCount";
-        return (Long) redisTemplate.opsForValue().get(key);
+        redisTemplate.opsForValue().increment(key);
     }
 
     public void resetViewCount(Long cardId) {
         String key = "card:" + cardId + ":viewCount";
-        redisTemplate.opsForValue().set(key, 0);
+        redisTemplate.opsForValue().set(key, "1");
     }
 
     @Scheduled(cron = "0 0 0 * * ?")
