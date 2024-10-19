@@ -31,7 +31,7 @@ public class TaskListService {
 
     private Board getBoard(Long boardId) {
         return boardRepository.findById(boardId)
-                .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
+            .orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
     }
 
     // 조회 루틴
@@ -53,9 +53,9 @@ public class TaskListService {
      */
     @Transactional
     public TaskListSaveResponse saveList(
-            AuthUser authUser,
-            TaskListSaveRequest request,
-            Long boardId
+        AuthUser authUser,
+        TaskListSaveRequest request,
+        Long boardId
     ) {
         User user = validateList(authUser);
         Board board = getBoard(boardId);
@@ -67,7 +67,6 @@ public class TaskListService {
 
         // 리스트 생성 알림 전송
         notificationService.sendListCreationNotification(user.getEmail(), boardId.toString(), savedTaskList.getId().toString(), savedTaskList.getTitle());
-
         return new TaskListSaveResponse(savedTaskList);
     }
 
@@ -80,20 +79,20 @@ public class TaskListService {
      * @return HTTPStatus.ok
      */
     public TaskListResponse getList(
-            AuthUser authUser,
-            Long boardId,
-            Long listId
+        AuthUser authUser,
+        Long boardId,
+        Long listId
     ) {
         validateList(authUser);
         Board board = getBoard(boardId);
 
         TaskList list = taskListRepository.findById(listId).orElseThrow(
-                () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
+            () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
 
         return new TaskListResponse(
-                list.getId(),
-                list.getTitle(),
-                list.getIndex()
+            list.getId(),
+            list.getTitle(),
+            list.getIndex()
         );
     }
 
@@ -108,10 +107,10 @@ public class TaskListService {
      */
     @Transactional
     public TaskListResponse updateList(
-            AuthUser authUser,
-            TaskListRequest request,
-            Long boardId,
-            Long listId
+        AuthUser authUser,
+        TaskListRequest request,
+        Long boardId,
+        Long listId
     ) {
 
         validateList(authUser);
@@ -120,7 +119,7 @@ public class TaskListService {
         Long totalListIndex = (long) board.getLists().size();
 
         TaskList list = taskListRepository.findById(listId).orElseThrow(
-                () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
+            () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
 
         list.updateList(request);
 
@@ -140,15 +139,15 @@ public class TaskListService {
      */
     @Transactional
     public void deleteList(
-            AuthUser authUser,
-            Long boardId,
-            Long listId
+        AuthUser authUser,
+        Long boardId,
+        Long listId
     ) {
         validateList(authUser);
         Board board = getBoard(boardId);
 
         TaskList list = taskListRepository.findById(listId).orElseThrow(
-                () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
+            () -> new CustomException(ErrorCode.LIST_NOT_FOUND, "해당 리스트를 찾을 수 없습니다."));
 
         taskListRepository.delete(list);
     }
