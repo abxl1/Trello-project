@@ -39,15 +39,19 @@ public class CardRepositoryImpl implements CustomCardRepository {
 
         List<Tuple> results = jpaQueryFactory
                 .selectDistinct(qCard,
-                        qCard.title, qCard.description,
-                        qActivity.activity, qActivity.timestamp)
+                        qCard.title,
+                        qCard.description,
+                        qActivity.activity,
+                        qActivity.timestamp)
                 .from(qCard)
                 .join(qCard.cardActivities, qActivity).fetchJoin()
                 .where(qCard.id.eq(cardId))
                 .fetch();
 
         List<CardActivityResponse> activityResponses = results.stream()
-                .map(tuple -> new CardActivityResponse(tuple.get(qActivity.activity), tuple.get(qActivity.timestamp)))
+                .map(tuple -> new CardActivityResponse(tuple.get(qActivity.activity),
+                        tuple.get(qActivity.timestamp)
+                ))
                 .collect(Collectors.toList());
 
         List<Tuple> commentList = jpaQueryFactory
@@ -58,11 +62,16 @@ public class CardRepositoryImpl implements CustomCardRepository {
                 .fetch();
 
         List<CommentResponse> commentResponses = commentList.stream()
-                .map(tuple -> new CommentResponse(tuple.get(qComment).getCommentId(), tuple.get(qComment).getText(), tuple.get(qComment.user.email)))
+                .map(tuple -> new CommentResponse(tuple.get(qComment).getCommentId(),
+                        tuple.get(qComment).getText(),
+                        tuple.get(qComment.user.email)
+                ))
                 .collect(Collectors.toList());
 
-        return new CardDetailResponse(results.get(0).get(qCard.title), results.get(0).get(qCard.description), activityResponses, commentResponses);
-
+        return new CardDetailResponse(results.get(0).get(qCard.title),
+                results.get(0).get(qCard.description),
+                activityResponses,
+                commentResponses);
     }
 
 
